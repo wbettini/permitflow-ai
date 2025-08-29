@@ -13,7 +13,7 @@ app = FastAPI(title="PermitFlow-AI", version="0.2.0")
 async def websocket_flowbot(websocket: WebSocket):
     await websocket.accept()
     orch = Orchestrator()
-    await websocket.send_text("👋 Hi, I'm FlowBot! What type of permit are we working on today?")
+    await websocket.send_text("👋 Hi, I'm FlowBot! What type of 'Permit to...' are we working on today?")
 
     try:
         while True:
