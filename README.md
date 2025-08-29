@@ -44,7 +44,7 @@ permitflow-ai/ ├── agents/ │   ├── flowbot/flowbot.py       # Flow
 
 2. **Run the app**  
    ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
+   gunicorn -c gunicorn_conf.py main:app
 
 📈 Roadmap
 - [ ] Add more SME agent types with domain‑specific logic.
@@ -57,12 +57,24 @@ permitflow-ai/ ├── agents/ │   ├── flowbot/flowbot.py       # Flow
 License MIT License — see LICENSE for details.
 
 
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-- http://localhost:8000/health → should return {"status":"ok"}.
-- http://localhost:8000/docs → interactive Swagger UI.
-https://vigilant-acorn-qx7r9744qhxp4-8000.app.github.dev/health
-https://vigilant-acorn-qx7r9744qhxp4-8000.app.github.dev/docs
+🤝 Contributing
+Pull requests are welcome!
+If you have ideas for new SME agents, UI improvements, or integrations, open an issue or fork the repo.💡 Why PermitFlow‑AI?Most approval workflows are slow, opaque, and siloed.
+PermitFlow‑AI makes them:- Transparent — every decision has a justification.
+- Efficient — FlowBot collects exactly what’s needed, no more, no less.
+- Flexible — easily reconfigure SMEs and required fields without code changes.
+- Engaging — real‑time chat makes the process feel human, not bureaucratic.
 
-curl -s -X POST http://localhost:8000/permit/run \
-  -H "Content-Type: application/json" \
-  -d '{"permit_type":"Permit to Design","application":{"name":"Sample App","owner":"Demo User"}}' | jq
+---
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/wbettini/permitflow-ai-demo/main/monitoring/latency_trends.png" 
+       alt="Azure Smoke Test Latency Trends" width="600">
+</p>
+
+Live Status
+<p align="center"><!-- Shields.io badges --><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wbettini/93c19d78e2f7ea5477c83cfa3bb5b2d3/raw/latency.json" alt="Avg Latency"><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wbettini/8902bf762ca4daa4a38e4e7b4b0c483f/raw/uptime.json" alt="Uptime"></p>
+<p align="center"><!-- Latency trend chart --><img src="https://raw.githubusercontent.com/wbettini/permitflow-ai-demo/main/monitoring/latency_trends.png" alt="Azure Smoke Test Latency Trends" width="700"></p>
+
+
+<p align="center"><em>Last updated: <!--LAST_UPDATED--></em></p>

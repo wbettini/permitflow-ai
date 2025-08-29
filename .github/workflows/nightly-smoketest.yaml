@@ -1,0 +1,236 @@
+name: Nightly Azure Smoke Test
+
+on:
+  schedule:
+    - cron: "0 2 * * *"  # 2:00 AM UTC nightly
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pandas matplotlib
+
+      - name: Run smoke tests (test-only mode) and save outputs
+        id: smoketest
+        run: |
+          chmod +x deploy_and_test.sh
+          ./deploy_and_test.sh --test-only | tee smoketest_output.txt
+
+          # Append results to CSV
+          python3 <<'PYCODE'
+import csv, datetime, requests, websocket, json, ssl, time, os
+
+BASE_URL = "https://permitflow-ai-demo.azurewebsites.net"
+WS_PATH = "/ws/flowbot"
+timestamp = datetime.datetime.utcnow().isoformat()
+
+results = []
+
+def log_result(endpoint, status, ms):
+    results.append({
+        "timestamp": timestamp,
+        "endpoint": endpoint,
+        "status": status,
+        "response_time_ms": f"{ms:.1f}"
+    })
+
+def check_http(path):
+    start = time.perf_counter()
+    try:
+        r = requests.get(BASE_URL + path, timeout=10)
+        elapsed = (time.perf_counter() - start) * 1000
+        status = "OK" if r.status_code == 200 else f"FAIL({r.status_code})"
+        log_result(path, status, elapsed)
+    except Exception as e:
+        elapsed = (time.perf_counter() - start) * 1000
+        log_result(path, f"ERROR({e})", elapsed)
+
+def check_websocket():
+    ws_url = BASE_URL.replace("https", "wss") + WS_PATH
+    start = time.perf_counter()
+    try:
+        ws = websocket.create_connection(ws_url, sslopt={"cert_reqs": ssl.CERT_NONE}, timeout=10)
+        handshake_time = (time.perf_counter() - start) * 1000
+        log_result("WS Handshake", "OK", handshake_time)
+        test_message = {"message": "Hello from nightly CSV"}
+        ws.send(json.dumps(test_message))
+        msg_start = time.perf_counter()
+        ws.recv()
+        msg_time = (time.perf_counter() - msg_start) * 1000
+        log_result("WS Message", "OK", msg_time)
+        ws.close()
+    except Exception as e:
+        log_result("WebSocket", f"ERROR({e})", 0)
+
+check_http("/")
+check_http("/health")
+check_http("/docs")
+check_websocket()
+
+os.makedirs("monitoring", exist_ok=True)
+csv_path = "monitoring/smoketest_results.csv"
+file_exists = os.path.isfile(csv_path)
+
+with open(csv_path, "a", newline="") as f:
+    writer = csv.DictWriter(f, fieldnames=["timestamp", "endpoint", "status", "response_time_ms"])
+    if not file_exists:
+        writer.writeheader()
+    writer.writerows(results)
+PYCODE
+
+      - name: Generate latency trend chart
+        run: |
+          python3 <<'PYCODE'
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+
+CSV_PATH = "monitoring/smoketest_results.csv"
+IMG_PATH = "monitoring/latency_trends.png"
+
+os.makedirs("monitoring", exist_ok=True)
+
+if not os.path.isfile(CSV_PATH):
+    with open(CSV_PATH, "w") as f:
+        f.write("timestamp,endpoint,status,response_time_ms\n")
+
+df = pd.read_csv(CSV_PATH)
+
+if df.empty:
+    plt.figure(figsize=(8, 5))
+    plt.text(0.5, 0.5, "No data yet", ha="center", va="center", fontsize=16, alpha=0.7)
+    plt.axis("off")
+    plt.savefig(IMG_PATH, dpi=150)
+else:
+    df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+    df = df.sort_values("timestamp")
+    ok_df = df[df["status"] == "OK"]
+
+    plt.figure(figsize=(10, 6))
+    for endpoint in ok_df["endpoint"].unique():
+        ep_data = ok_df[ok_df["endpoint"] == endpoint]
+        plt.plot(ep_data["timestamp"], ep_data["response_time_ms"], marker="o", label=endpoint)
+
+    plt.title("Azure Smoke Test Latency Trends")
+    plt.xlabel("Date/Time (UTC)")
+    plt.ylabel("Response Time (ms)")
+    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(IMG_PATH, dpi=150)
+PYCODE
+
+      - name: Commit monitoring data & chart
+        run: |
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add monitoring/smoketest_results.csv monitoring/latency_trends.png
+          git commit -m "Nightly smoke test log & chart: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "No changes to commit"
+          git push
+
+      - name: Update README last updated timestamp
+        run: |
+          ts="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          sed -i "s|<!--LAST_UPDATED-->.*<!--LAST_UPDATED-->|<!--LAST_UPDATED-->${ts}<!--LAST_UPDATED-->|" README.md
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add README.md
+          git commit -m "Update README last updated timestamp: ${ts}" || echo "No changes to commit"
+          git push
+
+      - name: Calculate latest average latency and uptime, create badge JSONs
+        run: |
+          python3 <<'PYCODE'
+import pandas as pd, json, os
+
+CSV_PATH = "monitoring/smoketest_results.csv"
+os.makedirs("badges", exist_ok=True)
+
+latency_badge = {
+    "schemaVersion": 1,
+    "label": "Avg Latency",
+    "message": "N/A",
+    "color": "lightgrey"
+}
+uptime_badge = {
+    "schemaVersion": 1,
+    "label": "Uptime",
+    "message": "N/A",
+    "color": "lightgrey"
+}
+
+if os.path.isfile(CSV_PATH):
+    df = pd.read_csv(CSV_PATH)
+    if not df.empty:
+        latest_ts = df["timestamp"].max()
+        latest_df = df[df["timestamp"] == latest_ts]
+        ok_df = latest_df[latest_df["status"] == "OK"]
+
+        if not ok_df.empty:
+            avg_latency = ok_df["response_time_ms"].astype(float).mean()
+            latency_badge["message"] = f"{avg_latency:.1f} ms"
+            latency_badge["color"] = "green" if avg_latency < 500 else "orange" if avg_latency < 1000 else "red"
+
+        total_checks = len(latest_df)
+        if total_checks > 0:
+            uptime_pct = (len(ok_df) / total_checks) * 100
+            uptime_badge["message"] = f"{uptime_pct:.1f}%"
+            uptime_badge["color"] = "green" if uptime_pct >= 99 else "orange" if uptime_pct >= 95 else "red"
+
+with open("badges/latency.json", "w") as f:
+    json.dump(latency_badge, f)
+with open("badges/uptime.json", "w") as f:
+    json.dump(uptime_badge, f)
+PYCODE
+
+      - name: Update latency badge in Gist
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 93c19d78e2f7ea5477c83cfa3bb5b2d3
+          filename: latency.json
+          jsonFile: badges/latency.json
+
+      - name: Update uptime badge in Gist
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 8902bf762ca4daa4a38e4e7b4b0c483f
+          filename: uptime.json
+          jsonFile: badges/uptime.json
+
+      - name: Send failure email with attachments
+        if: failure()
+        uses: dawidd6/action-send-mail@v6
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "🚨 Azure Smoke Test FAILED for ${{ github.repository }}"
+          to: william.bettini@gmail.com
+          from: "Azure Smoke Test Bot <william.bettini@gmail.com>"
+          body: |
+            The nightly smoke test for ${{ github.repository }} has FAILED.
+
+            Workflow: ${{ github.workflow }}
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Attachments:
+            - smoketest_output.txt → full console log
+            - smoketest_results.csv → timestamped performance data
+           

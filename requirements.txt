@@ -1,4 +1,9 @@
 fastapi
 uvicorn[standard]
+gunicorn
 pydantic
 rich
+requests
+websocket-client
+pandas
+matplotlib

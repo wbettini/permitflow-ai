@@ -1,0 +1,39 @@
+DO NOT USE:
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+
+USE:
+gunicorn -c gunicorn_conf.py main:app
+https://vigilant-acorn-qx7r9744qhxp4-8000.app.github.dev/health
+https://vigilant-acorn-qx7r9744qhxp4-8000.app.github.dev/docs
+
+curl -s -X POST http://localhost:8000/permit/run \
+  -H "Content-Type: application/json" \
+  -d '{"permit_type":"Permit to Design","application":{"name":"Sample App","owner":"Demo User"}}' | jq
+
+  azure cli:
+  curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+  az webapp up --name permitflow-ai-demo --sku F1
+
+  az webapp log tail --name permitflow-ai-demo --resource-group PermitFlowAI-RG
+
+  https://permitflow-ai-demo.azurewebsites.net
+
+  debug: https://permitflow-ai-demo.scm.azurewebsites.net/
+  
+  redeploy:
+  az webapp up \
+  --name permitflow-ai-demo \
+  --resource-group PermitFlowAI-RG \
+  --runtime "PYTHON:3.12" \
+  --sku F1 \
+  --location eastus2
+
+  restart:
+  az webapp restart --name permitflow-ai-demo --resource-group PermitFlowAI-RG
+
+  python smoke_test.py
+
+  ./deploy_and_test.sh
+  ./deploy_and_test.sh --test-only
