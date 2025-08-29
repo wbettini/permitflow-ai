@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 0  # full history so we can rebase
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -134,23 +135,10 @@ jobs:
               plt.savefig(IMG_PATH, dpi=150)
           PYCODE
 
-      - name: Commit monitoring data & chart
-        run: |
-          git config --local user.email "github-actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git add monitoring/smoketest_results.csv monitoring/latency_trends.png
-          git commit -m "Nightly smoke test log & chart: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "No changes to commit"
-          git push
-
       - name: Update README last updated timestamp
         run: |
           ts="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           sed -i "s|<!--LAST_UPDATED-->.*<!--LAST_UPDATED-->|<!--LAST_UPDATED-->${ts}<!--LAST_UPDATED-->|" README.md
-          git config --local user.email "github-actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git add README.md
-          git commit -m "Update README last updated timestamp: ${ts}" || echo "No changes to commit"
-          git push
 
       - name: Calculate latest average latency and uptime, create badge JSONs
         run: |
@@ -169,52 +157,4 @@ jobs:
           uptime_badge = {
               "schemaVersion": 1,
               "label": "Uptime",
-              "message": "N/A",
-              "color": "lightgrey"
-          }
-
-          if os.path.isfile(CSV_PATH):
-              df = pd.read_csv(CSV_PATH)
-              if not df.empty:
-                  latest_ts = df["timestamp"].max()
-                  latest_df = df[df["timestamp"] == latest_ts]
-                  ok_df = latest_df[latest_df["status"] == "OK"]
-
-                  if not ok_df.empty:
-                      avg_latency = ok_df["response_time_ms"].astype(float).mean()
-                      latency_badge["message"] = f"{avg_latency:.1f} ms"
-                      latency_badge["color"] = "green" if avg_latency < 500 else "orange" if avg_latency < 1000 else "red"
-
-                  total_checks = len(latest_df)
-                  if total_checks > 0:
-                      uptime_pct = (len(ok_df) / total_checks) * 100
-                      uptime_badge["message"] = f"{uptime_pct:.1f}%"
-                      uptime_badge["color"] = "green" if uptime_pct >= 99 else "orange" if uptime_pct >= 95 else "red"
-
-          with open("badges/latency.json", "w") as f:
-              json.dump(latency_badge, f)
-          with open("badges/uptime.json", "w") as f:
-              json.dump(uptime_badge, f)
-          PYCODE
-
-      - name: Push latency.json to Gist
-        run: |
-          if [ ! -s badges/latency.json ]; then
-            echo "❌ ERROR: badges/latency.json is missing or empty."
-            exit 1
-          fi
-          echo "📡 Updating latency badge Gist..."
-          curl -s -X PATCH \
-            -H "Authorization: token ${{ secrets.GIST_SECRET }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/gists/93c19d78e2f7ea5477c83cfa3bb5b2d3 \
-            -d @- <<EOF
-          {
-            "files": {
-              "latency.json": {
-                "content": "$(cat badges/latency.json)"
-              }
-            }
-          }
-          EOF
-          echo "✅ latency.json pushed to Gist 93c19d78e2f7ea5477c83cfa
+             
