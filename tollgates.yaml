@@ -1,0 +1,7 @@
+Permit to Design:
+  required_fields: ["name", "owner"]
+  smes: ["Cybersecurity"]
+
+Permit to Build:
+  required_fields: ["name", "owner", "infrastructure_plan"]
+  smes: ["Cybersecurity", "Infrastructure Architecture"]

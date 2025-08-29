@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FlowBot Live Chat</title>
+  <link rel="icon" href="/static/flowbot-avatar.png" type="image/png">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    #chat { max-width: 600px; margin: 40px auto; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    #messages { height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; background: #fafafa; }
+    .msg { display: flex; align-items: flex-start; margin: 8px 0; }
+    .msg.bot { flex-direction: row; }
+    .msg.user { flex-direction: row-reverse; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; margin: 0 8px; }
+    .bubble { padding: 10px 14px; border-radius: 16px; max-width: 75%; }
+    .bot .bubble { background: #e6f0ff; color: #000; }
+    .user .bubble { background: #0078d4; color: white; }
+    #inputArea { display: flex; }
+    #input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    button { padding: 10px 15px; margin-left: 5px; background: #0078d4; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #005a9e; }
+  </style>
+</head>
+<body>
+  <div id="chat">
+    <h2>💬 Chat with FlowBot</h2>
+    <div id="messages"></div>
+    <div id="inputArea">
+      <input id="input" type="text" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const messagesDiv = document.getElementById('messages');
+    const input = document.getElementById('input');
+
+    // Auto-detect ws:// vs wss://
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const ws = new WebSocket(`${protocol}://${window.location.host}/ws/flowbot`);
+
+    ws.onmessage = (event) => {
+      addMessage(event.data, 'bot');
+    };
+
+    function sendMessage() {
+      const text = input.value.trim();
+      if (text) {
+        ws.send(text);
+        addMessage(text, 'user');
+        input.value = '';
+      }
+    }
+
+    function addMessage(text, sender) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `msg ${sender}`;
+
+      const avatar = document.createElement('img');
+      avatar.className = 'avatar';
+      avatar.src = sender === 'bot' ? '/static/flowbot-avatar.png' : '/static/user-avatar.png';
+      avatar.alt = sender === 'bot' ? 'FlowBot' : 'You';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = text;
+
+      msgDiv.appendChild(avatar);
+      msgDiv.appendChild(bubble);
+      messagesDiv.appendChild(msgDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>
