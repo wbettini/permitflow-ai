@@ -213,4 +213,6 @@ jobs:
           {
             "files": {
               "latency.json": {
-                "content": "$(cat badges
+                "content": "$(cat badges/latency.json)"
+              }
+            }
