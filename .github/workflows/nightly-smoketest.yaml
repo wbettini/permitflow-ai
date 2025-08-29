@@ -138,21 +138,26 @@ jobs:
           if os.path.isfile(CSV_PATH):
               df = pd.read_csv(CSV_PATH)
               if not df.empty and {"timestamp","endpoint","status","response_time_ms"} <= set(df.columns):
-                  # Use latest batch (same timestamp)
-                  latest_ts = df["timestamp"].max()
-                  latest_df = df[df["timestamp"] == latest_ts]
+                  # Parse timestamps and group by date
+                  df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+                  latest_date = df["timestamp"].dt.date.max()
+                  latest_df = df[df["timestamp"].dt.date == latest_date]
+
+                  print(f"Found {len(latest_df)} rows for latest date {latest_date}")
 
                   ok_df = latest_df[latest_df["status"] == "OK"]
 
                   # Latency
                   if not ok_df.empty:
-                      try:
-                          avg_latency = pd.to_numeric(ok_df["response_time_ms"], errors="coerce").dropna().mean()
-                          if pd.notna(avg_latency):
-                              latency_badge["message"] = f"{avg_latency:.1f} ms"
-                              latency_badge["color"] = "green" if avg_latency < 500 else "orange" if avg_latency < 1000 else "red"
-                      except Exception:
-                          pass  # leave defaults
+                      avg_latency = pd.to_numeric(ok_df["response_time_ms"], errors="coerce").dropna().mean()
+                      if pd.notna(avg_latency):
+                          latency_badge["message"] = f"{avg_latency:.1f} ms"
+                          latency_badge["color"] = "green" if avg_latency < 500 else "orange" if avg_latency < 1000 else "red"
+                          print(f"Avg latency: {latency_badge['message']} ({latency_badge['color']})")
+                      else:
+                          print("No numeric latency values found.")
+                  else:
+                      print("No OK rows found for latest date.")
 
                   # Uptime
                   total_checks = len(latest_df)
@@ -160,6 +165,9 @@ jobs:
                       uptime_pct = (len(ok_df) / total_checks) * 100
                       uptime_badge["message"] = f"{uptime_pct:.1f}%"
                       uptime_badge["color"] = "green" if uptime_pct >= 99 else "orange" if uptime_pct >= 95 else "red"
+                      print(f"Uptime: {uptime_badge['message']} ({uptime_badge['color']})")
+                  else:
+                      print("No checks found for latest date.")
 
           with open("badges/latency.json", "w") as f:
               json.dump(latency_badge, f)
