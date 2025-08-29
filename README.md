@@ -72,9 +72,15 @@ PermitFlow‑AI makes them:- Transparent — every decision has a justification.
        alt="Azure Smoke Test Latency Trends" width="600">
 </p>
 
-Live Status
-<p align="center"><!-- Shields.io badges --><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wbettini/93c19d78e2f7ea5477c83cfa3bb5b2d3/raw/latency.json" alt="Avg Latency"><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wbettini/8902bf762ca4daa4a38e4e7b4b0c483f/raw/uptime.json" alt="Uptime"></p>
-<p align="center"><!-- Latency trend chart --><img src="https://raw.githubusercontent.com/wbettini/permitflow-ai-demo/main/monitoring/latency_trends.png" alt="Azure Smoke Test Latency Trends" width="700"></p>
+## Live Status
 
+<p align="center">
+  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wbettini/93c19d78e2f7ea5477c83cfa3bb5b2d3/raw/latency.json" alt="Avg Latency">
+  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wbettini/8902bf762ca4daa4a38e4e7b4b0c483f/raw/uptime.json" alt="Uptime">
+</p>
 
-<p align="center"><em>Last updated: <!--LAST_UPDATED--></em></p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/wbettini/permitflow-ai-demo/main/monitoring/latency_trends.png" alt="Azure Smoke Test Latency Trends" width="700">
+</p>
+
+<p align="center"><em>Last updated: <!--LAST_UPDATED-->2025‑08‑29 00:00:00 UTC<!--LAST_UPDATED--></em></p>
