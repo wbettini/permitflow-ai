@@ -213,13 +213,4 @@ jobs:
           {
             "files": {
               "latency.json": {
-                "content": "$(cat badges/latency.json)"
-              }
-            }
-          }
-          EOF
-
-      - name: Push uptime.json to Gist
-        if: success()
-        run: |
-          if [ !
+                "content": "$(cat badges
