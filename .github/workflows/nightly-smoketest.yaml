@@ -1,9 +1,9 @@
 name: Nightly Azure Smoke Test
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: "0 AM UTC nightly
- 2 * * *"  # 2:00  workflow_dispatch:
+    - cron: "0 2 * * *"  # 2:00 AM UTC nightly
 
 jobs:
   smoke-test:
@@ -16,57 +16,48 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
-          fetch-depth: 0  # full history so we can rebase
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: name: Install dependencies "3.12"
+          python-version: "3.12"
 
-      -
+      - name: Install dependencies
         run: pip install -r requirements.txt pandas matplotlib websocket-client requests
 
       - name: Run smoke tests (test-only mode) and save outputs
         run: |
           chmod +x deploy_and_test.sh
-          ./deploy_and_test.sh --test-only | tee smoketest_output.txt
+          ./deploy_and_test.sh smoketest_output --test-only | tee.txt
 
-          python3 <<'PYCODE'
-         , requests, websocket, json, ssl, time import csv, datetime, os
-
-          BASE_URL = "https://.azurewebsites.net"
-          WS_PATHpermitflow-ai-demo = "/ws/flowbot"
+          python # --- Smoke test3 <<'PYCODE'
+          Python code ---
+          import, websocket, json csv, datetime, requests, ssl, time, os
+          BASE_URL = "https://permitflow-ai-demo.azurewebsites.net"
+          WS_PATH = "/ws/flowbot"
           timestamp = datetime.datetime.utcnow().isoformat()
-
           results = []
-
-          def log_result(endpoint, status, ms):
-              results.append({
-                  "timestamp": timestamp,
-                  "endpoint": endpoint,
-                  "status": status,
-                  "response_time_ms": f"{ms:.1f}"
-              })
-
-          def):
-              check_http(path start = time.perf_counter()
+          def log_result(endpoint results.append({"timestamp": timestamp, "endpoint": endpoint, status, ms):
+             , "status": status, "response_time_ms": f"{ms:.1f}"})
+          def check_http(path start = time.per):
+             f_counter()
               try:
                   r = requests.get(BASE_URL + path, timeout=10)
                   elapsed = (time.perf_counter() - start) * 1000
                   status = "OK" if r.status_code == 200 else f"FAIL({r.status_code})"
                   log_result(path, status, elapsed)
-              except                  Exception as e:
- elapsed = (time.perf_counter() - start) * 1000
-                  log_result(path, f"ERROR({e})", elapsed)
-
+              except Exception as e:
+                  elapsed = (time.perf_counter() - log_result(path start) * 1000
+                 , f"ERROR({e})", elapsed)
           def check_websocket():
               ws_url = BASE_URL.replace("https", "wss") + WS_PATH
-              start = time.perf_counter try:
-                 ()
-              ws = websocket.create_connection(ws_urlqs": ssl.CERT_NONE, sslopt={"cert_re}, timeout=10)
-                  handshake_time = (time.perf_counter() - start) * 1000
-                  log_result("WS Hand_time)
-                 shake", "OK", handshake ws.send(json.dumps({"message": "Hello from nightly CSV"}))
+              start = time.perf_counter()
+              try:
+                  ws = websocket.create_connection(ws_url, sslopt={"cert_re}, timeout=10)
+                 qs": ssl.CERT_NONE handshake_time =() - start) * 100 (time.perf_counter0
+                  log_result("WS Handshake", "OK", handshake_time)
+                  ws.send(json.dumps({"message": "Hello from nightly CSV"}))
                   msg_start = time.perf_counter()
                   ws.recv()
                   msg_time = (time.perf_counter() - msg_start) * 1000
@@ -74,16 +65,13 @@ jobs:
                   ws.close()
               except Exception as e:
                   log_result("WebSocket", f"ERROR({e})", 0)
-
           check_http("/")
-("/health")
-                   check_http check_http("/docs")
+          check_http("/health")
+          check_http("/docs")
           check_websocket()
-
           os.makedirs("monitoring", exist_ok=True)
-          csv_path = "monitoring/smoketest_results_exists = os.path.csv"
-          file.isfile(csv_path)
-
+          csv_path = "monitoring/smoketest_results.csv"
+          file.isfile(csv_path_exists = os.path)
           with open(csv_path, "a", newline="") as f:
               writer = csv.DictWriter(f, fieldnames=["timestamp", "endpoint", "status", "response_time_ms"])
               if not file_exists:
@@ -94,36 +82,27 @@ jobs:
       - name: Generate latency trend chart
         run: |
           python3 <<'PYCODE'
-          import os
-          import pandas as pd
-          import matplotlib.pyplot as plt
-
+          import os, pandas as pd, matplotlib.pyplot as plt
           CSV_PATH = "monitoring/smoketest_results.csv"
           IMG_PATH = "monitoring/latency_trends.png"
-
           os.makedirs("monitoring", exist_ok=True)
-
-          if not os.path.isfile(C with open(CSV_PATHSV_PATH):
-             , "w") as f:
-                 ,endpoint,status f.write("timestamp,response_time_ms\n")
-
+          if not os.path.isfile(CSV_PATH):
+              with open(CSV_PATH, "w") as f:
+                  f.write("timestamp,endpoint,status,response_time_ms\n")
           df = pd.read_csv(CSV_PATH)
-
           if df.empty:
               plt.figure(figsize=(8, 5))
               plt.text(0.5, 0.5, "No data yet", ha="center", va="center", fontsize=16, alpha=0.7)
-              plt plt.savefig(IMG.axis("off")
-             _PATH, dpi=150)
+              plt.axis("off")
+              plt.savefig(IMG_PATH, dpi=150)
           else:
               df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
               df = df.sort_values("timestamp")
               ok_df = df[df["status"] == "OK"]
-
-              plt.figure(figsize for endpoint in=(10, 6))
-              ok_df["endpoint"].unique():
-                  ep_data = ok_df[ok_df["endpoint"] == endpoint]
-                  plt.plot(ep_data["timestamp"], ep_data["response_time_ms"], marker="o", label=endpoint)
-
+              plt.figure(figsize=(10, 6))
+              for endpoint in ok_df["endpoint"]. ep_data = ok_df[ok_df["endpoint"] == endpoint]
+                  plt.plot(ep_data["timestamp"], epunique():
+                 _data["response_time_ms"], marker="o", label=endpoint)
               plt.title("Azure Smoke Test Latency Trends")
               plt.xlabel("Date/Time (UTC)")
               plt.ylabel("Response Time (ms)")
@@ -133,115 +112,71 @@ jobs:
               plt.savefig(IMG          PYCODE_PATH, dpi=150)
 
 
-      - name: Update README last updated timestamp
-        run: |
+      - name: Update timestamp
+        README last updated run: |
           ts="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           sed -i "s|<!--LAST_UPDATED-->.*<!--LAST_UPDATED-->|<!--LAST_UPDATED-->${ts}<!--LAST_UPDATED-->|" README.md
 
-      latest average latency - name: Calculate and uptime, create badge JSONs
+      - name: Calculate latest average latency and uptime, create badge JSONs
         run: |
           python3 <<'PYCODE'
           import pandas as pd, json, os
-
-          CSV_PATH = "monitoring/smoketest_results.csv"
-          os.makedirs("badges", exist_ok=True)
-
-          latency_badge = {
-              "schemaVersion": 1,
-              "label": "Avg Latency",
-              "message": "N/A",
-              "color": "lightgrey"
-          }
-          uptime_badge = {
-              "schemaVersion": 1,
-              "label": "Uptime",
-              "message": "N/A",
-              "color": "lightgrey"
-          }
-
-.isfile(CSV_PATH          if os.path):
+          CSVing/smoketest_results_PATH = "monitor.csv"
+          os", exist_ok=True.makedirs("badges)
+          latency_badge = {"schemaVersion": 1, "label": "Avg Latency", "message": "N/A", "color": "lightgrey"}
+          uptime_badge = {"schemaVersion": 1, "label": "Uptime", "message": "N/A", "color": "lightgrey"}
+          if os.path.isfile(CSV_PATH):
               df = pd.read_csv(CSV_PATH)
               if not df.empty:
-                 max()
-                  latest_ts = df["timestamp"]. latest_df = df[df["timestamp"] == latest_ts]
+                  latest_ts = df["timestamp"].max()
+                  latest_df = df[df["timestamp"] == latest_ts]
                   ok_df = latest_df[latest_df["status"] == "OK"]
-
                   if not ok_df.empty:
-                      avg_latency = ok_df["response_time_ms"].()
-                     astype(float).mean latency_badge["message"] = f"{avg_latency:.1f} ms"
+                      avg_latency = ok_df["response_time_ms"].astype(float).mean()
+                      latency_badge["message"] = f"{avg_latency:.1f} ms"
                       latency_badge["color"] = "green" if avg_latency < 500 else "orange" if avg_latency < 1000 else "red"
-
-                 (latest_df)
-                  total_checks = len if total_checks > 0:
+                  total_checks = len(latest_df)
+                  if total_checks > 0:
                       uptime_pct = (len(ok_df) / total_checks) * 100
                       uptime_badge["message"] = f"{uptime_pct:.1f}%"
-                      uptime_badge["color"] = "green" if uptimeorange" if uptime_pct >= 99 else "red"
-
-          with_pct >= 95 else " open("badges/latency.json", "w") as f:
+                      uptime_badge["color"] = "green" if uptime_pct >= 99 else "orange" if uptime_pct >= 95 else "red"
+          with open("badges/latency.json", "w") as f:
               json.dump(latency_badge, f)
-          with open("badgesw") as f:
-             /uptime.json", " json.dump(uptime_badge, f)
+          with open("badges/uptime.json", "w") as f:
+              json.dump(uptime_badge, f)
           PYCODE
 
       - name: Commit and push all changes once (with rebase + autostash safety net)
         run: |
           git config --local user.email "github-actions@github.com"
           git config --local user.name "GitHub Actions"
-
-          # Stage absolutely everything
           git add -A
-
-          # Fetch latest main origin main
-
-         
-          git fetch # Rebase with autostash to handle any last-second changes
-          if ! git pull --rebase --autostash origin main; then
-            echo "❌ Merge conflict or rebase error detected. Aborting git rebase --abort push."
-            || true
+          git fetch origin main
+          ifbase --autostash ! git pull --re origin main; then
+            echo or rebase error "❌ Merge conflict push."
+            detected. Aborting git rebase --abort || true
             exit 1
           fi
-
-          git commit -m "Nightly smoke test updates-%m-%d %H:%M:%S UTC: $(date -u +'%Y')" || echo "No changes to commit"
+          git commit -m "Nightly smoke test updates: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "No changes to commit"
           git push origin main
 
       - name: Push latency.json to Gist
         if: success()
         run: |
-          if [ ! -s badges/latency.json ]; then
-            echo "❌ ERROR: badges/latency.json is missing or empty."
-            exit 1
-          fi
-s -X PATCH \
-            -H "Authorization          curl -: token ${{ secrets.GIST_SECRET }}"H "Accept: application/vnd.github.v3+json" \
-            https \
-            -://api.github.com/gists/93c19d78e2f7ea5477c83cfa3bb5b2d3 \
-            -d @- <<EOF
-          {
-            "files": {
-              "latency.json": {
-                "content": "$(cat badges/latency.json)"
-                       }
-          }
-            }
- EOF
-
-      - name: Push uptime.json to Gist
-        if: success()
-        run: |
-          if [ ! -s badges/uptime.json ]; then
-            echo "❌ ERROR: badges/uptime.json is missing or empty."
+          then
+            if [ ! -s badges/latency.json ]; echo "❌ ERROR: badges/latency.json is missing or empty."
             exit 1
           fi
           curl -s -X PATCH \
             -H "Authorization: token ${{ secrets.GIST_SECRET }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/gists/8902bf762ca4daa4a38e4e7b4b0c483f \
+            https://api.github.com/gists/93c19d78e2f7ea5477c83cfa3bb5b2d3 \
             -d @- <<EOF
           {
             "files": {
-              "uptime.json": {
-                "content": "$(cat badges/uptime.json)"
-              }
+              "latency.json": {
+                "content": "$(cat)"
+              badges/latency.json }
             }
           }
           EOF
