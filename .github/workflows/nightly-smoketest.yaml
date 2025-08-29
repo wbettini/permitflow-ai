@@ -198,16 +198,34 @@ jobs:
               json.dump(uptime_badge, f)
           PYCODE
 
-      - name: Update latency badge in Gist
-        uses: schneegans/dynamic-badges-action@v1.7.0
+      - name: Update latency badge in Gist (safe mode)
+        run: |
+          echo "🔍 Checking local badge file: badges/latency.json"
+          if [ ! -s badges/latency.json ]; then
+            echo "❌ ERROR: badges/latency.json is missing or empty."
+            exit 1
+          fi
+          echo "📡 Attempting to update Gist ID: 93c19d78e2f7ea5477c83cfa3bb5b2d3 (latency.json)"
+        shell: bash
+      - uses: schneegans/dynamic-badges-action@v1.7.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: 93c19d78e2f7ea5477c83cfa3bb5b2d3
           filename: latency.json
           jsonFile: badges/latency.json
 
-      - name: Update uptime badge in Gist
-        uses: schneegans/dynamic-badges-action@v1.7.0
+      - name: Update uptime badge in Gist (safe mode)
+        run: |
+          echo "🔍 Checking local badge file: badges/uptime.json"
+          if [ ! -s badges/uptime.json ]; then
+            echo "❌ ERROR: badges/uptime.json is missing or empty."
+            exit 1
+          fi
+          echo "📡 Attempting to update Gist ID: 8902bf762ca4daa4a38e4e7b4b0c483f (uptime.json)"
+        shell: bash
+      - uses: schneegans/dynamic-badges-action@v1.7.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
-          gistID: 8902bf762ca4daa4a38e4e7b4
+          gistID: 8902bf762ca4daa4a38e4e7b4b0c483f
+          filename: uptime.json
+          jsonFile: badges/uptime.json
