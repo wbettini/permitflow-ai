@@ -209,7 +209,7 @@ jobs:
             exit 1
           fi
           echo "📤 Pushing latency.json to Gist..."
-          jq -n --argfile content badges/latency.json '{files: {"latency.json": {content: $content}}}' > payload.json
+          jq -Rs '{files: {"latency.json": {content: .}}}' < badges/latency.json > payload.json
           curl -v -X PATCH \
             -H "Authorization: token ${{ secrets.GIST_SECRET }}" \
             -H "Accept: application/vnd.github.v3+json" \
@@ -224,7 +224,7 @@ jobs:
             exit 1
           fi
           echo "📤 Pushing uptime.json to Gist..."
-          jq -n --argfile content badges/uptime.json '{files: {"uptime.json": {content: $content}}}' > payload.json
+          jq -Rs '{files: {"uptime.json": {content: .}}}' < badges/uptime.json > payload.json
           curl -v -X PATCH \
             -H "Authorization: token ${{ secrets.GIST_SECRET }}" \
             -H "Accept: application/vnd.github.v3+json" \
