@@ -31,7 +31,6 @@ jobs:
           chmod +x deploy_and_test.sh
           ./deploy_and_test.sh --test-only | tee smoketest_output.txt
 
-          # Append results to CSV
           python3 <<'PYCODE'
           import csv, datetime, requests, websocket, json, ssl, time, os
 
@@ -198,34 +197,24 @@ jobs:
               json.dump(uptime_badge, f)
           PYCODE
 
-      - name: Update latency badge in Gist (safe mode)
+      - name: Push latency.json to Gist
         run: |
-          echo "🔍 Checking local badge file: badges/latency.json"
           if [ ! -s badges/latency.json ]; then
             echo "❌ ERROR: badges/latency.json is missing or empty."
             exit 1
           fi
-          echo "📡 Attempting to update Gist ID: 93c19d78e2f7ea5477c83cfa3bb5b2d3 (latency.json)"
-        shell: bash
-      - uses: schneegans/dynamic-badges-action@v1.7.0
-        with:
-          auth: ${{ secrets.GIST_SECRET }}
-          gistID: 93c19d78e2f7ea5477c83cfa3bb5b2d3
-          filename: latency.json
-          jsonFile: badges/latency.json
-
-      - name: Update uptime badge in Gist (safe mode)
-        run: |
-          echo "🔍 Checking local badge file: badges/uptime.json"
-          if [ ! -s badges/uptime.json ]; then
-            echo "❌ ERROR: badges/uptime.json is missing or empty."
-            exit 1
-          fi
-          echo "📡 Attempting to update Gist ID: 8902bf762ca4daa4a38e4e7b4b0c483f (uptime.json)"
-        shell: bash
-      - uses: schneegans/dynamic-badges-action@v1.7.0
-        with:
-          auth: ${{ secrets.GIST_SECRET }}
-          gistID: 8902bf762ca4daa4a38e4e7b4b0c483f
-          filename: uptime.json
-          jsonFile: badges/uptime.json
+          echo "📡 Updating latency badge Gist..."
+          curl -s -X PATCH \
+            -H "Authorization: token ${{ secrets.GIST_SECRET }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/gists/93c19d78e2f7ea5477c83cfa3bb5b2d3 \
+            -d @- <<EOF
+          {
+            "files": {
+              "latency.json": {
+                "content": "$(cat badges/latency.json)"
+              }
+            }
+          }
+          EOF
+          echo "✅ latency.json pushed to Gist 93c19d78e2f7ea5477c83cfa
