@@ -119,30 +119,66 @@ jobs:
       - name: Calculate latest average latency and uptime, create badge JSONs
         run: |
           python3 <<'PYCODE'
-          import pandas as pd, json, os
+          import os, json, pandas as pd
+
           CSV_PATH = "monitoring/smoketest_results.csv"
           os.makedirs("badges", exist_ok=True)
-          latency_badge = {"schemaVersion": 1, "label": "Avg Latency", "message": "N/A", "color": "lightgrey"}
-          uptime_badge = {"schemaVersion": 1, "label": "Uptime", "message": "N/A", "color": "lightgrey"}
+
+          def base_badge(label):
+              return {
+                  "schemaVersion": 1,
+                  "label": label,
+                  "message": "N/A",
+                  "color": "lightgrey"
+              }
+
+          latency_badge = base_badge("Avg Latency")
+          uptime_badge  = base_badge("Uptime")
+
           if os.path.isfile(CSV_PATH):
               df = pd.read_csv(CSV_PATH)
-              if not df.empty:
+              if not df.empty and {"timestamp","endpoint","status","response_time_ms"} <= set(df.columns):
+                  # Use latest batch (same timestamp)
                   latest_ts = df["timestamp"].max()
                   latest_df = df[df["timestamp"] == latest_ts]
+
                   ok_df = latest_df[latest_df["status"] == "OK"]
+
+                  # Latency
                   if not ok_df.empty:
-                      avg_latency = ok_df["response_time_ms"].astype(float).mean()
-                      latency_badge["message"] = f"{avg_latency:.1f} ms"
-                      latency_badge["color"] = "green" if avg_latency < 500 else "orange" if avg_latency < 1000 else "red"
+                      try:
+                          avg_latency = pd.to_numeric(ok_df["response_time_ms"], errors="coerce").dropna().mean()
+                          if pd.notna(avg_latency):
+                              latency_badge["message"] = f"{avg_latency:.1f} ms"
+                              latency_badge["color"] = "green" if avg_latency < 500 else "orange" if avg_latency < 1000 else "red"
+                      except Exception:
+                          pass  # leave defaults
+
+                  # Uptime
                   total_checks = len(latest_df)
                   if total_checks > 0:
                       uptime_pct = (len(ok_df) / total_checks) * 100
                       uptime_badge["message"] = f"{uptime_pct:.1f}%"
                       uptime_badge["color"] = "green" if uptime_pct >= 99 else "orange" if uptime_pct >= 95 else "red"
+
           with open("badges/latency.json", "w") as f:
               json.dump(latency_badge, f)
           with open("badges/uptime.json", "w") as f:
               json.dump(uptime_badge, f)
+          PYCODE
+
+      - name: Validate badge JSONs
+        run: |
+          python3 - <<'PYCODE'
+          import json, sys
+          for path in ("badges/latency.json", "badges/uptime.json"):
+              with open(path) as f:
+                  d = json.load(f)
+              assert isinstance(d.get("schemaVersion"), int), f"{path} missing numeric schemaVersion"
+              assert isinstance(d.get("label"), str), f"{path} missing label"
+              assert isinstance(d.get("message"), str), f"{path} message must be string"
+              assert isinstance(d.get("color"), str), f"{path} color must be string"
+          print("✅ Badge JSONs valid.")
           PYCODE
 
       - name: Commit and push all changes once (with rebase + autostash safety net)
