@@ -1,10 +1,10 @@
 🔍 Running smoke tests only (no deploy)...
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (1071.6 ms)
-[0;32m[OK][0m    /health             → 200  (439.8 ms)
+[0;32m[OK][0m    /                   → 200  (601.6 ms)
+[0;32m[OK][0m    /health             → 200  (110.1 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (160.8 ms)
+[0;32m[OK][0m    /docs               → 200  (73.3 ms)
 [1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot
-[0;32m[OK][0m    Handshake           → 297.5 ms
-[0;32m[OK][0m    Message roundtrip   → 11.9 ms | 👋 Hi, I'm FlowBot! What type of 'Permit to...' are we working on today?
+[0;32m[OK][0m    Handshake           → 526.2 ms
+[0;32m[OK][0m    Message roundtrip   → 4.6 ms | 👋 Hi, I'm FlowBot! What type of 'Permit to...' are we working on today?
