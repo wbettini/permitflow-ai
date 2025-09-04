@@ -1,8 +1,8 @@
 🔍 Running smoke tests only (no deploy)...
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;31m[ERROR][0m    /                   → HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10)  (10109.2 ms)
-[0;31m[ERROR][0m    /health             → HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10)  (10114.9 ms)
-[0;31m[ERROR][0m    /docs               → HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10)  (10104.8 ms)
+[0;31m[ERROR][0m    /                   → HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10)  (10228.8 ms)
+[0;31m[ERROR][0m    /health             → HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10)  (10439.4 ms)
+[0;31m[ERROR][0m    /docs               → HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10)  (10187.6 ms)
 [1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
