@@ -84,3 +84,8 @@ timestamp,endpoint,status,response_time_ms
 2025-09-04T02:33:49.452118,/docs,OK,784.3
 2025-09-04T02:33:49.452118,WS Handshake,OK,243.3
 2025-09-04T02:33:49.452118,WS Message,OK,7.8
+2025-09-05T02:34:57.743863,/,"ERROR(HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10))",10209.1
+2025-09-05T02:34:57.743863,/health,OK,9445.8
+2025-09-05T02:34:57.743863,/docs,OK,226.2
+2025-09-05T02:34:57.743863,WS Handshake,OK,811.4
+2025-09-05T02:34:57.743863,WS Message,OK,9.1
