@@ -5,3 +5,7 @@ Permit to Design:
 Permit to Build:
   required_fields: ["name", "owner", "infrastructure_plan"]
   smes: ["Cybersecurity", "Infrastructure Architecture"]
+  
+Permit to Operate:
+  required_fields: ["name", "owner", "run_book"]
+  smes: ["Cybersecurity", "Infrastructure Architecture"]
