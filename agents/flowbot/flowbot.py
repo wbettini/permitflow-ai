@@ -9,11 +9,20 @@ class FlowBot:
     def __init__(self, state_manager, required_fields, prompts_file="permitFlowDb/tollgate_prompts.json"):
         self.state = state_manager
         self.required_fields = required_fields
-        self.llm = get_llm(temperature=0.7)
+        self.llm = None  # defer initialization until first use
         self.history = []
         self.current_tollgate = 1
         self.current_prompt_index = 1
         self.prompts = self._load_prompts(prompts_file)
+
+    # -------------------------
+    # Internal: ensure LLM is loaded
+    # -------------------------
+    def _ensure_llm(self):
+        """Initialize the LLM only once, on demand."""
+        if self.llm is None:
+            self.llm = get_llm(temperature=0.7)
+        return self.llm
 
     # -------------------------
     # Prompt loading
@@ -107,7 +116,8 @@ class FlowBot:
         current_field = missing[0]
         prompt = flowbot_conversational_prompt()
         next_question = f"Could you tell me the {current_field}?"
-        response = (prompt | self.llm).invoke({
+        llm = self._ensure_llm()  # lazy-load here
+        response = (prompt | llm).invoke({
             "history": self.format_history(),
             "missing_fields": ", ".join(missing),
             "application": app_data,

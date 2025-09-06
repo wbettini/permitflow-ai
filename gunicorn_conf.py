@@ -3,7 +3,11 @@ import multiprocessing
 
 # Calculate optimal number of workers: (CPU cores * 2) + 1
 # workers = multiprocessing.cpu_count() * 2 + 1
+
 # Use a fixed, low number of workers for low-memory environments
+# On small Azure App Service plans, each worker is a full Python process.
+# Reducing to 1 worker minimizes memory usage and avoids OOM kills.
+# Increase this if you move to a larger plan with more RAM.
 workers = 2
 
 # Use Uvicorn's ASGI worker class for FastAPI
