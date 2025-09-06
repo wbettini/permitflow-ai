@@ -1,13 +1,18 @@
+import os
 import multiprocessing
 
 # Calculate optimal number of workers: (CPU cores * 2) + 1
-workers = multiprocessing.cpu_count() * 2 + 1
+# workers = multiprocessing.cpu_count() * 2 + 1
+# Use a fixed, low number of workers for low-memory environments
+workers = 2
 
 # Use Uvicorn's ASGI worker class for FastAPI
 worker_class = "uvicorn.workers.UvicornWorker"
 
 # Bind to the port Azure provides (default 8000 locally)
-bind = "0.0.0.0:8000"
+# bind = "0.0.0.0:8000"
+# Dynamically bind to Azure's injected port
+bind = f"0.0.0.0:{os.environ.get('PORT', '8000')}"
 
 # Keep-alive settings for WebSockets
 keepalive = 30  # seconds to keep idle connections alive

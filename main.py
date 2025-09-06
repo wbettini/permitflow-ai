@@ -1,12 +1,16 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import os
 
 from core.state_manager import StateManager
 from agents.flowbot.flowbot import FlowBot
 
+# -------------------------
+# FastAPI App Initialization
+# -------------------------
 app = FastAPI(title="PermitFlow-AI", version="0.2.0")
+print("🚀 FlowBot is live and listening...")
 
 # -------------------------
 # WebSocket: FlowBot Live Chat
@@ -48,15 +52,18 @@ async def websocket_flowbot(websocket: WebSocket):
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
+        print(f"⚠️ WebSocket error: {e}")
         await websocket.send_text(f"⚠️ Error: {e}")
 
 # -------------------------
 # Serve Chat UI + Static Assets
 # -------------------------
-
 @app.get("/")
 async def root():
-    return FileResponse(os.path.join("public", "index.html"))
+    index_path = os.path.join("public", "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return JSONResponse(content={"message": "UI not found"}, status_code=404)
 
 app.mount("/static", StaticFiles(directory="public"), name="static")
 
@@ -66,3 +73,15 @@ app.mount("/static", StaticFiles(directory="public"), name="static")
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+# -------------------------
+# Version Endpoint
+# -------------------------
+@app.get("/version")
+def version():
+    return {
+        "app_name": app.title,
+        "version": app.version,
+        "environment": os.environ.get("ENVIRONMENT", "production"),
+        "port": os.environ.get("PORT", "8000")
+    }
