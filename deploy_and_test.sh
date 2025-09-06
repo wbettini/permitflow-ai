@@ -12,7 +12,7 @@ WS_PATH="/ws/flowbot"
 # ====== MAIN ======
 run_smoke_tests() {
 python3 - <<EOF
-import requests, websocket, json, ssl, time
+import requests, websocket, ssl, time
 
 BASE_URL = "$BASE_URL"
 WS_PATH = "$WS_PATH"
@@ -51,7 +51,7 @@ def check_http(path):
         elapsed = (time.perf_counter() - start) * 1000
         print(f"{fmt('error')}{path.ljust(PATH_WIDTH)}→ {e}  ({elapsed:.1f} ms)")
 
-def check_websocket():
+def check_websocket_full_flow():
     ws_url = BASE_URL.replace("https", "wss") + WS_PATH
     print(f"{fmt('info')}{'WebSocket connect'.ljust(PATH_WIDTH)}→ {ws_url}")
     start = time.perf_counter()
@@ -59,12 +59,40 @@ def check_websocket():
         ws = websocket.create_connection(ws_url, sslopt={"cert_reqs": ssl.CERT_NONE}, timeout=10)
         handshake_time = (time.perf_counter() - start) * 1000
         print(f"{fmt('ok')}{'Handshake'.ljust(PATH_WIDTH)}→ {handshake_time:.1f} ms")
-        test_message = {"message": "Hello from smoke test!"}
-        ws.send(json.dumps(test_message))
-        msg_start = time.perf_counter()
-        response = ws.recv()
-        msg_time = (time.perf_counter() - msg_start) * 1000
-        print(f"{fmt('ok')}{'Message roundtrip'.ljust(PATH_WIDTH)}→ {msg_time:.1f} ms | {response}")
+
+        # Step 1: Permit type
+        ws.send("Permit to Design")
+        reply = ws.recv()
+        print(f"{fmt('ok')}{'TG1 start'.ljust(PATH_WIDTH)}→ {reply}")
+
+        # Step 2: Purpose
+        ws.send("The purpose is to expedite tollgate approvals for project managers")
+        reply = ws.recv()
+        print(f"{fmt('ok')}{'Purpose reply'.ljust(PATH_WIDTH)}→ {reply}")
+
+        # Step 3: Service name
+        ws.send("The service name is PermitFlow")
+        reply = ws.recv()
+        print(f"{fmt('ok')}{'Service name reply'.ljust(PATH_WIDTH)}→ {reply}")
+
+        # Step 4: Owner
+        ws.send("The owner is Bill Bettini")
+        reply = ws.recv()
+        print(f"{fmt('ok')}{'Owner reply'.ljust(PATH_WIDTH)}→ {reply}")
+
+        # Step 5: Data classification
+        ws.send("The data classification is non private")
+        reply = ws.recv()
+        print(f"{fmt('ok')}{'Data class reply'.ljust(PATH_WIDTH)}→ {reply}")
+
+        # Step 6: SME review / TG2
+        reply = ws.recv()
+        print(f"{fmt('ok')}{'TG2 SME review'.ljust(PATH_WIDTH)}→ {reply}")
+
+        # Step 7: TG3 / Final approval
+        reply = ws.recv()
+        print(f"{fmt('ok')}{'TG3 final'.ljust(PATH_WIDTH)}→ {reply}")
+
         ws.close()
     except Exception as e:
         print(f"{fmt('error')}{'WebSocket test'.ljust(PATH_WIDTH)}→ {e}")
@@ -73,7 +101,7 @@ print(f"{YELLOW}Running smoke tests against {BASE_URL}...{NC}\n")
 check_http("/")
 check_http("/health")
 check_http("/docs")
-check_websocket()
+check_websocket_full_flow()
 EOF
 }
 
