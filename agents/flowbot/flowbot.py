@@ -118,15 +118,14 @@ class FlowBot:
         current_field = missing[0]
         prompt = flowbot_conversational_prompt()
         next_question = f"Could you tell me the {current_field}?"
-        llm = self._ensure_llm()  # lazy-load here
-        response = (prompt | llm).invoke({
+        llm = self._ensure_llm()
+        raw_response = (prompt | llm).invoke({
             "history": self.format_history(),
             "missing_fields": ", ".join(missing),
-            # "application": app_data,
-            # Convert dict to a readable string
             "application": "\n".join(f"{k}: {v}" for k, v in app_data.items()),
             "next_question": next_question
         })
+        response = str(raw_response)  # <-- ensure it's a string
         self.history.append(("FlowBot", response))
         return response
 
