@@ -1,8 +1,10 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from core.orchestration import Orchestrator
 import os
+
+from core.state_manager import StateManager
+from agents.flowbot.flowbot import FlowBot
 
 app = FastAPI(title="PermitFlow-AI", version="0.2.0")
 
@@ -12,7 +14,12 @@ app = FastAPI(title="PermitFlow-AI", version="0.2.0")
 @app.websocket("/ws/flowbot")
 async def websocket_flowbot(websocket: WebSocket):
     await websocket.accept()
-    orch = Orchestrator()
+
+    # Initialise new FlowBot
+    required_fields = ["service_name", "owner", "data_classification"]
+    state = StateManager()
+    bot = FlowBot(state, required_fields, prompts_file="permitFlowDb/tollgate_prompts.json")
+
     await websocket.send_text("👋 Hi, I'm FlowBot! What type of 'Permit to...' are we working on today?")
 
     try:
@@ -20,31 +27,23 @@ async def websocket_flowbot(websocket: WebSocket):
             data = await websocket.receive_text()
 
             # First message = permit type
-            if not orch.state.get("permit_type"):
-                start_msg = orch.start_permit(data)
-                if "error" in start_msg:
-                    await websocket.send_text(start_msg["error"])
+            if not state.get("permit_type"):
+                if not data.lower().startswith("permit to"):
+                    await websocket.send_text(
+                        "Which type of permit are we working on? For example: Permit to Design, Permit to Build, Permit to Operate."
+                    )
                     continue
-                await websocket.send_text(start_msg["message"])
-                await websocket.send_text("Please provide the first piece of application info (key=value).")
+                start_msg = bot.start(data)
+                await websocket.send_text(start_msg)
                 continue
 
-            # Subsequent messages = application data
-            if "=" in data:
-                key, value = data.split("=", 1)
-                step = orch.continue_permit({key.strip(): value.strip()})
-            else:
-                await websocket.send_text("⚠️ Please send data as key=value")
-                continue
+            # All subsequent messages go through FlowBot's natural-language aware converse()
+            reply = bot.converse(data)
+            await websocket.send_text(reply)
 
-            if step.get("status") == "incomplete":
-                await websocket.send_text(step["message"])
-            elif step.get("status") == "finished":
-                await websocket.send_text("✅ All steps complete! Here's the result:")
-                await websocket.send_json(step)
+            # Optional: detect end of process
+            if bot.current_tollgate == 3 and "Process complete" in reply:
                 break
-            else:
-                await websocket.send_text(step.get("message", "OK"))
 
     except WebSocketDisconnect:
         print("Client disconnected")
@@ -55,12 +54,10 @@ async def websocket_flowbot(websocket: WebSocket):
 # Serve Chat UI + Static Assets
 # -------------------------
 
-# Serve index.html at root
 @app.get("/")
 async def root():
     return FileResponse(os.path.join("public", "index.html"))
 
-# Serve /static/* for CSS/JS/images
 app.mount("/static", StaticFiles(directory="public"), name="static")
 
 # -------------------------

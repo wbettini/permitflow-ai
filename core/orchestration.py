@@ -1,6 +1,6 @@
 from core.state_manager import StateManager
 from agents.flowbot.flowbot import FlowBot
-from agents.smes.cyber_sme import CyberSME
+from agents.smes.cyber_sme import get_cyber_sme_tool
 from core.human_review import HumanReviewer
 from core.config_loader import load_tollgate_config
 
@@ -17,7 +17,7 @@ class Orchestrator:
         if not cfg:
             return {"error": f"Unknown permit type: {permit_type}"}
         self.flowbot = FlowBot(self.state, cfg["required_fields"])
-        self.smes = [CyberSME()]  # Later: map SME names to classes dynamically
+        self.smes = [get_cyber_sme_tool()]  # Later: map SME names to classes dynamically
         return {"message": self.flowbot.start(permit_type)}
 
     def continue_permit(self, user_input: dict):

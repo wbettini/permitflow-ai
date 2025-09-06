@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 from langchain_config import get_llm, flowbot_conversational_prompt
 from agents.smes.cyber_sme import get_cyber_sme_tool
@@ -11,9 +12,12 @@ class FlowBot:
         self.llm = get_llm(temperature=0.7)
         self.history = []
         self.current_tollgate = 1
-        self.current_prompt_index = 1  # Track which prompt within the tollgate we're on
+        self.current_prompt_index = 1
         self.prompts = self._load_prompts(prompts_file)
 
+    # -------------------------
+    # Prompt loading
+    # -------------------------
     def _load_prompts(self, file_path):
         with open(Path(file_path), "r", encoding="utf-8") as f:
             return json.load(f)
@@ -24,6 +28,24 @@ class FlowBot:
     def _get_total_prompts(self, tollgate_number):
         return len(self.prompts.get(str(tollgate_number), {}))
 
+    # -------------------------
+    # Natural language field extraction
+    # -------------------------
+    def _extract_field_from_text(self, text):
+        patterns = {
+            "service_name": r"(?:called|named|service name (?:is|will be)|project is|project will be)\s+([A-Za-z0-9 _-]+)",
+            "owner": r"(?:I am|I will be|owned by|owner is)\s+([A-Za-z0-9 _-]+)",
+            "data_classification": r"(Confidential|Public|Internal|Sensitive|Not sensitive|Non[- ]?private|Non[- ]?sensitive)"
+        }
+        for field, pattern in patterns.items():
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                return field, match.group(1).strip()
+        return None, None
+
+    # -------------------------
+    # Conversation flow
+    # -------------------------
     def start(self, permit_type: str):
         self.state.set("permit_type", permit_type)
         self.state.set("application", {})
@@ -43,13 +65,22 @@ class FlowBot:
             self.history.append(("FlowBot", prompt_text))
             return prompt_text
 
-        # Otherwise, proceed with normal logic
+        # Merge user input into application state
         app_data = self.state.get("application", {})
-        if ":" in user_message:
+
+        # Try natural language extraction first
+        field, value = self._extract_field_from_text(user_message)
+        if field and value:
+            app_data[field] = value
+            self.state.set("application", app_data)
+
+        # Fallback to explicit field: value parsing
+        elif ":" in user_message:
             field, value = [p.strip() for p in user_message.split(":", 1)]
             app_data[field] = value
             self.state.set("application", app_data)
 
+        # Find missing fields
         missing = [f for f in self.required_fields if f not in app_data or not app_data[f]]
 
         if self.current_tollgate == 1:
@@ -72,8 +103,10 @@ class FlowBot:
             return "✅ Process complete. Start a new application to begin again."
 
     def _ask_for_missing_field(self, missing, app_data):
+        """Always ask for the *current* missing field to avoid jumping back."""
+        current_field = missing[0]
         prompt = flowbot_conversational_prompt()
-        next_question = f"Could you tell me the {missing[0]}?"
+        next_question = f"Could you tell me the {current_field}?"
         response = (prompt | self.llm).invoke({
             "history": self.format_history(),
             "missing_fields": ", ".join(missing),
@@ -86,6 +119,9 @@ class FlowBot:
     def format_history(self):
         return "\n".join(f"{speaker}: {msg}" for speaker, msg in self.history)
 
+    # -------------------------
+    # SME orchestration
+    # -------------------------
     def run_sme_reviews(self, application: dict) -> dict:
         app_str = "\n".join(f"{k}: {v}" for k, v in application.items())
         print("\n[DEBUG] Sending application to CyberSME:\n", app_str)
@@ -94,8 +130,10 @@ class FlowBot:
         infra_result = get_infra_sme_tool().run(app_str)
         return {"CyberSME": cyber_result, "InfraSME": infra_result}
 
+    # -------------------------
+    # Decision aggregation
+    # -------------------------
     def aggregate_decisions(self, sme_results: dict) -> tuple[str, str]:
-        # Weighted + debug logic from earlier version
         cyber = sme_results.get("CyberSME", {})
         infra = sme_results.get("InfraSME", {})
         cyber_decision = cyber.get("decision", "").lower()
@@ -132,6 +170,9 @@ class FlowBot:
             print("[DEBUG] Final decision: DECLINE (score < 0)")
             return ("decline", f"Weighted SME consensus decline:\n- CyberSME: {cyber_just}\n- InfraSME: {infra_just}")
 
+    # -------------------------
+    # Final output formatting
+    # -------------------------
     def format_final_output(self, application, sme_results, final_decision, final_justification):
         return f"""
 Permit to Design Application Summary
