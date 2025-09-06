@@ -14,6 +14,11 @@ except ImportError:
     AzureChatOpenAI = None
 
 # -------------------------
+# Default timeout for all LLM calls (seconds)
+# -------------------------
+DEFAULT_LLM_TIMEOUT = 15
+
+# -------------------------
 # Lazy-loaded LLM instance
 # -------------------------
 _llm_instance = None  # private cache
@@ -32,7 +37,12 @@ def get_llm(temperature: float = 0.2, model: str | None = None, streaming: bool 
     if provider == "openai":
         model_name = model or os.getenv("OPENAI_MODEL", "gpt-4o-mini")
         print(f"⚡ Initializing OpenAI LLM: {model_name}")
-        _llm_instance = ChatOpenAI(model=model_name, temperature=temperature, streaming=streaming)
+        _llm_instance = ChatOpenAI(
+            model=model_name,
+            temperature=temperature,
+            streaming=streaming,
+            request_timeout=DEFAULT_LLM_TIMEOUT
+        )
         return _llm_instance
 
     if provider == "azure_openai":
@@ -45,7 +55,8 @@ def get_llm(temperature: float = 0.2, model: str | None = None, streaming: bool 
             azure_deployment=model or os.getenv("AZURE_OPENAI_DEPLOYMENT"),
             api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2025-01-01-preview"),
             temperature=temperature,
-            streaming=streaming
+            streaming=streaming,
+            request_timeout=DEFAULT_LLM_TIMEOUT
         )
         return _llm_instance
 

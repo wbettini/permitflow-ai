@@ -136,12 +136,44 @@ class FlowBot:
     # SME orchestration
     # -------------------------
     def run_sme_reviews(self, application: dict) -> dict:
+        """Run SME reviews with timeouts and error handling to prevent hangs."""
         app_str = "\n".join(f"{k}: {v}" for k, v in application.items())
-        print("\n[DEBUG] Sending application to CyberSME:\n", app_str)
-        cyber_result = get_cyber_sme_tool().run(app_str)
-        print("\n[DEBUG] Sending application to InfraSME:\n", app_str)
-        infra_result = get_infra_sme_tool().run(app_str)
-        return {"CyberSME": cyber_result, "InfraSME": infra_result}
+        results = {}
+
+        # --- Cyber SME ---
+        try:
+            print("\n[DEBUG] Calling CyberSME...")
+            cyber_tool = get_cyber_sme_tool()
+            # If the SME tool wraps an LLM, enforce a timeout
+            if hasattr(cyber_tool, "llm") and hasattr(cyber_tool.llm, "request_timeout"):
+                cyber_tool.llm.request_timeout = 15  # seconds
+            results["CyberSME"] = cyber_tool.run(app_str)
+            print("[DEBUG] CyberSME done")
+        except Exception as e:
+            print(f"[ERROR] CyberSME failed: {e}")
+            results["CyberSME"] = {
+                "decision": "error",
+                "justification": f"CyberSME error: {e}",
+                "confidence": 0.0
+            }
+
+        # --- Infra SME ---
+        try:
+            print("\n[DEBUG] Calling InfraSME...")
+            infra_tool = get_infra_sme_tool()
+            if hasattr(infra_tool, "llm") and hasattr(infra_tool.llm, "request_timeout"):
+                infra_tool.llm.request_timeout = 15
+            results["InfraSME"] = infra_tool.run(app_str)
+            print("[DEBUG] InfraSME done")
+        except Exception as e:
+            print(f"[ERROR] InfraSME failed: {e}")
+            results["InfraSME"] = {
+                "decision": "error",
+                "justification": f"InfraSME error: {e}",
+                "confidence": 0.0
+            }
+
+        return results
 
     # -------------------------
     # Decision aggregation
