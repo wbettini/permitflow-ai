@@ -1,10 +1,13 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from core.site_properties import get_site_property
 import os
 
 from core.state_manager import StateManager
 from agents.flowbot.flowbot import FlowBot
+from core.site_properties import get_site_property
+
 
 # -------------------------
 # FastAPI App Initialization
@@ -20,11 +23,12 @@ async def websocket_flowbot(websocket: WebSocket):
     await websocket.accept()
 
     # Initialise new FlowBot
+    bot_name = get_site_property("FLOWBOT_PREFERRED_NAME", "FlowBot")
     required_fields = ["service_name", "owner", "data_classification"]
     state = StateManager()
     bot = FlowBot(state, required_fields, prompts_file="permitFlowDb/tollgate_prompts.json")
 
-    await websocket.send_text("👋 Hi, I'm FlowBot! What type of 'Permit to...' are we working on today?")
+    await websocket.send_text("👋 Hi, I'm {bot_name}! What type of 'Permit to...' are we working on today?")
 
     try:
         while True:
@@ -84,4 +88,15 @@ def version():
         "version": app.version,
         "environment": os.environ.get("ENVIRONMENT", "production"),
         "port": os.environ.get("PORT", "8000")
+    }
+
+# -------------------------
+# get_site_property
+# -------------------------
+@app.get("/site-properties")
+def site_properties():
+    return {
+        "FLOWBOT_PREFERRED_NAME": get_site_property("FLOWBOT_PREFERRED_NAME", "FlowBot"),
+        "SUPPORT_EMAIL": get_site_property("SUPPORT_EMAIL", "support@permitflow.bettini.us"),
+        "DEFAULT_LANGUAGE": get_site_property("DEFAULT_LANGUAGE", "en-US")
     }

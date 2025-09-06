@@ -4,6 +4,7 @@ from pathlib import Path
 from langchain_config import get_llm, flowbot_conversational_prompt
 from agents.smes.cyber_sme import get_cyber_sme_tool
 from agents.smes.infra_sme import get_infra_sme_tool
+from core.site_properties import get_site_property
 
 class FlowBot:
     def __init__(self, state_manager, required_fields, prompts_file="permitFlowDb/tollgate_prompts.json"):
@@ -14,6 +15,7 @@ class FlowBot:
         self.current_tollgate = 1
         self.current_prompt_index = 1
         self.prompts = self._load_prompts(prompts_file)
+        self.bot_name = get_site_property("FLOWBOT_PREFERRED_NAME", "FlowBot")
 
     # -------------------------
     # Internal: ensure LLM is loaded
