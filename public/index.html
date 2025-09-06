@@ -3,24 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <!-- <title>FlowBot Live Chat</title> -->
   <title>Loading…</title>
-  <script>
-    // Fetch the preferred bot name and update the <title> and heading
-    fetch('/site-properties')
-      .then(res => res.json())
-      .then(data => {
-        const botName = data.FLOWBOT_PREFERRED_NAME || 'FlowBot';
-        document.title = `${botName} Live Chat`; // updates <title>
-        const heading = document.getElementById('chat-heading');
-        if (heading) heading.textContent = `Chat with ${botName}`;
-      })
-      .catch(() => {
-        document.title = 'FlowBot Live Chat';
-        const heading = document.getElementById('chat-heading');
-        if (heading) heading.textContent = 'Chat with FlowBot';
-      });
-  </script>
 
   <link rel="icon" href="/static/flowbot-avatar.png" type="image/png">
   <style>
@@ -38,24 +21,55 @@
     #input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
     button { padding: 10px 15px; margin-left: 5px; background: #0078d4; color: white; border: none; border-radius: 4px; cursor: pointer; }
     button:hover { background: #005a9e; }
+    #support-email-btn {
+      display: none;
+      margin-top: 10px;
+      padding: 8px 14px;
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    #support-email-btn:hover {
+      background-color: #005a9e;
+    }
   </style>
-</head>
-<body>
-  <div id="chat">
 
-    <!-- <h2>💬 Chat with FlowBot</h2> -->
-    <h2 id="chat-heading"></h2>
-    <script>
+  <script>
+    // Fetch site properties and update title, heading, and support button
+    document.addEventListener('DOMContentLoaded', () => {
       fetch('/site-properties')
         .then(res => res.json())
         .then(data => {
-          document.getElementById('chat-heading').textContent =
-            `💬 Chat with ${data.FLOWBOT_PREFERRED_NAME}`;
+          const botName = data.FLOWBOT_PREFERRED_NAME || 'FlowBot';
+          document.title = `${botName} Live Chat`;
+          const heading = document.getElementById('chat-heading');
+          if (heading) heading.textContent = `💬 Chat with ${botName}`;
+
+          const supportEmail = data.SUPPORT_EMAIL;
+          const btn = document.getElementById('support-email-btn');
+          if (supportEmail) {
+            btn.textContent = `Email ${botName} Support`;
+            btn.style.display = 'inline-block';
+            btn.addEventListener('click', () => {
+              window.location.href = `mailto:${supportEmail}`;
+            });
+          }
         })
         .catch(() => {
-          document.getElementById('chat-heading').textContent = '💬 Chat with FlowBot';
+          document.title = 'FlowBot Live Chat';
+          const heading = document.getElementById('chat-heading');
+          if (heading) heading.textContent = '💬 Chat with FlowBot';
         });
-    </script> 
+    });
+  </script>
+</head>
+<body>
+  <div id="chat">
+    <h2 id="chat-heading"></h2>
+    <button id="support-email-btn"></button>
 
     <div id="messages"></div>
     <div id="inputArea">

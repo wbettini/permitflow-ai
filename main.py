@@ -28,7 +28,7 @@ async def websocket_flowbot(websocket: WebSocket):
     state = StateManager()
     bot = FlowBot(state, required_fields, prompts_file="permitFlowDb/tollgate_prompts.json")
 
-    await websocket.send_text("👋 Hi, I'm {bot_name}! What type of 'Permit to...' are we working on today?")
+    await websocket.send_text(f"👋 Hi, I'm {bot_name}! What type of 'Permit to...' are we working on today?")
 
     try:
         while True:

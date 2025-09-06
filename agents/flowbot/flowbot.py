@@ -122,7 +122,9 @@ class FlowBot:
         response = (prompt | llm).invoke({
             "history": self.format_history(),
             "missing_fields": ", ".join(missing),
-            "application": app_data,
+            # "application": app_data,
+            # Convert dict to a readable string
+            "application": "\n".join(f"{k}: {v}" for k, v in app_data.items()),
             "next_question": next_question
         })
         self.history.append(("FlowBot", response))
@@ -186,15 +188,17 @@ class FlowBot:
     # Final output formatting
     # -------------------------
     def format_final_output(self, application, sme_results, final_decision, final_justification):
+        app_str = "\n".join(f"{k}: {v}" for k, v in application.items())
+        sme_str = json.dumps(sme_results, ensure_ascii=False, indent=2)
         return f"""
 Permit to Design Application Summary
 ------------------------------------
 Permit Type: {self.state.get("permit_type")}
 Application Data:
-{application}
+{app_str}
 
 SME Results:
-{sme_results}
+{sme_str}
 
 Final Decision: {final_decision.upper()}
 Justification:
