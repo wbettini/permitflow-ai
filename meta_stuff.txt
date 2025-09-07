@@ -1,3 +1,7 @@
+
+
+clear; az webapp log tail --name permitflow-ai-demo --resource-group PermitFlowAI-RG
+
 DO NOT USE:
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
