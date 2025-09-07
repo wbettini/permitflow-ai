@@ -1,10 +1,18 @@
 🔍 Running smoke tests only (no deploy)...
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (972.2 ms)
-[0;32m[OK][0m    /health             → 200  (226.0 ms)
+[0;32m[OK][0m    /                   → 200  (531.9 ms)
+[0;32m[OK][0m    /health             → 200  (114.8 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (165.0 ms)
+[0;32m[OK][0m    /docs               → 200  (74.0 ms)
 [1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot
-[0;32m[OK][0m    Handshake           → 445.9 ms
-[0;32m[OK][0m    Message roundtrip   → 0.1 ms | 👋 Hi, I'm FlowBot! What type of 'Permit to...' are we working on today?
+[0;32m[OK][0m    Handshake           → 290.8 ms
+[0;32m[OK][0m    TG1 start           → 👋 Hi, I'm EmilyBot! What type of 'Permit to...' are we working on today?
+[0;32m[OK][0m    Purpose reply       → 📍 Tollgate 1: Permit to Design
+We’ll capture your project’s purpose, required features, compliance needs, infrastructure and workforce costs, and any gap analysis.
+[0;32m[OK][0m    Service name reply  → Once we have this information, you’ll have permission to proceed to the design phase.
+[0;32m[OK][0m    Owner reply         → content='FlowBot: Great! Now, could you please tell me who the owner of the PermitFlow service is? This will help us keep everything organized.' additional_kwargs={'refusal': None} response_metadata={'token_usage': {'completion_tokens': 31, 'prompt_tokens': 203, 'total_tokens': 234, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-4o-mini-2024-07-18', 'system_fingerprint': 'fp_efad92c60b', 'id': 'chatcmpl-CCzY878lNehMYglgOftphMycMAuRg', 'service_tier': None, 'prompt_filter_results': [{'prompt_index': 0, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'}, 'jailbreak': {'filtered': False, 'detected': False}, 'self_harm': {'filtered': False, 'severity': 'safe'}, 'sexual': {'filtered': False, 'severity': 'safe'}, 'violence': {'filtered': False, 'severity': 'safe'}}}], 'finish_reason': 'stop', 'logprobs': None, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'}, 'self_harm': {'filtered': False, 'severity': 'safe'}, 'sexual': {'filtered': False, 'severity': 'safe'}, 'violence': {'filtered': False, 'severity': 'safe'}}} id='run--6318cb27-605b-4f5a-b63e-146712fb3759-0' usage_metadata={'input_tokens': 203, 'output_tokens': 31, 'total_tokens': 234, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}}
+[0;32m[OK][0m    Data class reply    → content='FlowBot: Thank you, Bill! Now, could you please provide the data classification for the PermitFlow service? This is important for ensuring we handle the data appropriately.' additional_kwargs={'refusal': None} response_metadata={'token_usage': {'completion_tokens': 35, 'prompt_tokens': 671, 'total_tokens': 706, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-4o-mini-2024-07-18', 'system_fingerprint': 'fp_efad92c60b', 'id': 'chatcmpl-CCzY9ndBHyb7r78LdwCLcpUVfsmDk', 'service_tier': None, 'prompt_filter_results': [{'prompt_index': 0, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'}, 'jailbreak': {'filtered': False, 'detected': False}, 'self_harm': {'filtered': False, 'severity': 'safe'}, 'sexual': {'filtered': False, 'severity': 'safe'}, 'violence': {'filtered': False, 'severity': 'safe'}}}], 'finish_reason': 'stop', 'logprobs': None, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'}, 'self_harm': {'filtered': False, 'severity': 'safe'}, 'sexual': {'filtered': False, 'severity': 'safe'}, 'violence': {'filtered': False, 'severity': 'safe'}}} id='run--a0b0919c-4278-4430-a05b-34baa9e2de7a-0' usage_metadata={'input_tokens': 671, 'output_tokens': 35, 'total_tokens': 706, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}}
+[0;32m[OK][0m    TG2 SME review      → 📍 Tollgate 2: Permit to Build
+Our Cybersecurity, Infrastructure, Software Architecture, and Finance SMEs are reviewing your design for feasibility, security, and financial alignment.
+[0;31m[ERROR][0m    WebSocket test      → Connection timed out
