@@ -1,0 +1,93 @@
+/* ===== Chat Panel Layout ===== */
+#chat {
+  flex: 2;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 80px);
+}
+
+#chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #fafafa;
+}
+
+.msg {
+  display: flex;
+  align-items: flex-start;
+  margin: 8px 0;
+}
+.msg.bot { flex-direction: row; }
+.msg.user { flex-direction: row-reverse; }
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin: 0 8px;
+  object-fit: cover;
+}
+
+.bubble {
+  padding: 10px 14px;
+  border-radius: 16px;
+  max-width: 75%;
+}
+.bot .bubble { background: #e6f0ff; color: #000; }
+.user .bubble { background: #0078d4; color: white; }
+
+#inputArea { display: flex; }
+#input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* ===== Side Panel Layout ===== */
+#side-panel {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 80px);
+}
+
+#side-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+#side-panel h2 { margin-top: 0; }
+#side-panel section { margin-bottom: 1rem; }
+#side-panel ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  #main-container {
+    flex-direction: column;
+  }
+  #chat, #side-panel {
+    max-height: none;
+  }
+}

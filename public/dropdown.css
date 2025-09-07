@@ -1,0 +1,78 @@
+/* =========================================================
+   CUSTOM AVATAR DROPDOWN
+   ========================================================= */
+
+/* Container */
+#chat-header .custom-dropdown {
+  position: relative;
+  width: 220px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* Selected item display */
+#chat-header .dropdown-selected {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#chat-header .dropdown-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+#chat-header .dropdown-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dropdown list container */
+#chat-header .dropdown-list {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Individual list items */
+#chat-header .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+#chat-header .dropdown-item:hover {
+  background: #f0f6ff;
+}
+
+#chat-header .dropdown-item img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Show dropdown when active */
+#chat-header .custom-dropdown.open .dropdown-list {
+  display: block;
+}

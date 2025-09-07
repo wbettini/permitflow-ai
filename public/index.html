@@ -6,121 +6,94 @@
   <title>Loading…</title>
 
   <link rel="icon" href="/static/flowbot-avatar.png" type="image/png">
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-    #chat { max-width: 600px; margin: 40px auto; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    #messages { height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; background: #fafafa; }
-    .msg { display: flex; align-items: flex-start; margin: 8px 0; }
-    .msg.bot { flex-direction: row; }
-    .msg.user { flex-direction: row-reverse; }
-    .avatar { width: 36px; height: 36px; border-radius: 50%; margin: 0 8px; }
-    .bubble { padding: 10px 14px; border-radius: 16px; max-width: 75%; }
-    .bot .bubble { background: #e6f0ff; color: #000; }
-    .user .bubble { background: #0078d4; color: white; }
-    #inputArea { display: flex; }
-    #input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-    button { padding: 10px 15px; margin-left: 5px; background: #0078d4; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    button:hover { background: #005a9e; }
-    #support-email-btn {
-      display: none;
-      margin-top: 10px;
-      padding: 8px 14px;
-      background-color: #0078d4;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-    #support-email-btn:hover {
-      background-color: #005a9e;
-    }
-  </style>
 
-  <script>
-    // Fetch site properties and update title, heading, and support button
-    document.addEventListener('DOMContentLoaded', () => {
-      fetch('/site-properties')
-        .then(res => res.json())
-        .then(data => {
-          const botName = data.FLOWBOT_PREFERRED_NAME || 'FlowBot';
-          document.title = `${botName} Live Chat`;
-          const heading = document.getElementById('chat-heading');
-          if (heading) heading.textContent = `💬 Chat with ${botName}`;
-
-          const supportEmail = data.SUPPORT_EMAIL;
-          const btn = document.getElementById('support-email-btn');
-          if (supportEmail) {
-            btn.textContent = `Email ${botName} Support`;
-            btn.style.display = 'inline-block';
-            btn.addEventListener('click', () => {
-              window.location.href = `mailto:${supportEmail}`;
-            });
-          }
-        })
-        .catch(() => {
-          document.title = 'FlowBot Live Chat';
-          const heading = document.getElementById('chat-heading');
-          if (heading) heading.textContent = '💬 Chat with FlowBot';
-        });
-    });
-  </script>
+  <!-- CSS order: base → layout → components → dropdown -->
+  <link rel="stylesheet" href="/static/base.css">
+  <link rel="stylesheet" href="/static/layout.css">
+  <link rel="stylesheet" href="/static/components.css">
+  <link rel="stylesheet" href="/static/dropdown.css">
 </head>
 <body>
-  <div id="chat">
-    <h2 id="chat-heading"></h2>
-    <button id="support-email-btn"></button>
+  <div id="main-container">
+    <!-- Chat Panel -->
+    <div id="chat">
+      <div id="chat-header">
+        <h2 id="chat-heading"></h2>
+        <div class="custom-dropdown" id="avatar-dropdown">
+          <div class="dropdown-selected" id="dropdown-selected">
+            <!-- Default src prevents broken image before JS runs -->
+            <img src="/static/flowbot-avatar.png" alt="Selected Avatar" class="dropdown-avatar">
+            <span class="dropdown-name"></span>
+          </div>
+          <div class="dropdown-list" id="dropdown-list"></div>
+        </div>
+      </div>
+      <div id="messages"></div>
+      <div id="inputArea">
+        <input id="input" type="text" placeholder="Type your message..." />
+        <button id="send-btn">Send</button>
+      </div>
+    </div>
 
-    <div id="messages"></div>
-    <div id="inputArea">
-      <input id="input" type="text" placeholder="Type your message..." />
-      <button onclick="sendMessage()">Send</button>
+    <!-- Side Panel -->
+    <div id="side-panel">
+      <div id="side-panel-content">
+        <h2>Welcome to PermitFlow</h2>
+        <p>Your streamlined path from concept to operation. PermitFlow connects you with FlowBot — your AI-powered guide — to navigate every step of the permitting process.</p>
+
+        <section>
+          <h3>Permit to Design 🖊️</h3>
+          <ul>
+            <li>Define your project scope and objectives.</li>
+            <li>Gather required zoning, environmental, and safety guidelines.</li>
+            <li>Submit preliminary plans for review.</li>
+            <li>FlowBot can help identify missing documents and flag potential compliance issues early.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Permit to Build 🏗️</h3>
+          <ul>
+            <li>Finalize architectural and engineering drawings.</li>
+            <li>Secure contractor licenses and insurance documentation.</li>
+            <li>Schedule inspections and milestone approvals.</li>
+            <li>FlowBot can track submission status and remind you of upcoming deadlines.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Permit to Operate 🏢</h3>
+          <ul>
+            <li>Complete final inspections and safety certifications.</li>
+            <li>File operational compliance forms with local authorities.</li>
+            <li>Receive your occupancy or operational permit.</li>
+            <li>FlowBot can generate a closing checklist and archive your permit history.</li>
+          </ul>
+        </section>
+
+        <aside class="tip-box">
+          <strong>💡 Tip:</strong> Ask FlowBot “What’s my next step?” or “Show me my checklist for [phase].”
+        </aside>
+
+        <aside class="tip-box">
+          <strong>📧 Expert Support</strong>
+          <p>Have a question or need guidance? Our PermitFlow Support team is ready to assist you.</p>
+          <button id="support-email-btn">Contact Support</button>
+        </aside>
+      </div>
+
+      <footer>
+        <p>&copy; 2025 
+          <a href="https://www.bettini.us" target="_blank">
+            <img src="/static/wbettini-96x96.png" alt="Bill Bettini" class="footer-logo">
+            Bill Bettini
+          </a>. All rights reserved.
+        </p>
+      </footer>
     </div>
   </div>
 
-  <script>
-    const messagesDiv = document.getElementById('messages');
-    const input = document.getElementById('input');
-
-    // Auto-detect ws:// vs wss://
-    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const ws = new WebSocket(`${protocol}://${window.location.host}/ws/flowbot`);
-
-    ws.onmessage = (event) => {
-      addMessage(event.data, 'bot');
-    };
-
-    function sendMessage() {
-      const text = input.value.trim();
-      if (text) {
-        ws.send(text);
-        addMessage(text, 'user');
-        input.value = '';
-      }
-    }
-
-    function addMessage(text, sender) {
-      const msgDiv = document.createElement('div');
-      msgDiv.className = `msg ${sender}`;
-
-      const avatar = document.createElement('img');
-      avatar.className = 'avatar';
-      avatar.src = sender === 'bot' ? '/static/flowbot-avatar.png' : '/static/user-avatar.png';
-      avatar.alt = sender === 'bot' ? 'FlowBot' : 'You';
-
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-      bubble.textContent = text;
-
-      msgDiv.appendChild(avatar);
-      msgDiv.appendChild(bubble);
-      messagesDiv.appendChild(msgDiv);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendMessage();
-    });
-  </script>
+  <!-- External JS -->
+  <script src="/static/index.js"></script>
 </body>
 </html>

@@ -1,0 +1,108 @@
+/* ===== Buttons ===== */
+button {
+  padding: 10px 15px;
+  margin-left: 5px;
+  background: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background: #005a9e;
+}
+
+#support-email-btn {
+  display: none;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+#support-email-btn:hover {
+  background-color: #005a9e;
+}
+
+/* ===== Tip Box ===== */
+.tip-box {
+  background: #f0f6ff;
+  border-left: 4px solid #0078d4;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.tip-box strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #004578;
+}
+.tip-box p {
+  margin: 0 0 0.75rem 0;
+}
+.tip-box button {
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.tip-box button:hover {
+  background-color: #005a9e;
+}
+
+/* ===== Footer ===== */
+#side-panel footer {
+  margin-top: auto;
+  padding: 1rem 20px 0 20px;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+
+footer a {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-logo {
+  height: 18px;
+  width: auto;
+  vertical-align: middle;
+  margin: 0 4px;
+  border-radius: 50%;
+}
+
+/* ===== System Messages ===== */
+.msg.system {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.bubble.system-bubble {
+  background: #f0f0f0;
+  color: #555;
+  font-style: italic;
+  border-radius: 12px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  max-width: 80%;
+  text-align: center;
+}

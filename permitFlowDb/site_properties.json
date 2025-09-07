@@ -1,5 +1,11 @@
 {
   "FLOWBOT_PREFERRED_NAME": "FlowBot",
   "SUPPORT_EMAIL": "PermitFlow.Support@bettini.us",
-  "DEFAULT_LANGUAGE": "en-US"
+  "DEFAULT_LANGUAGE": "en-US",
+  "ALTERNATE_AVATARS": [
+    {"avatar":"FlowBot", "demeanor":"Chippy", "icon":"/static/flowbot-avatar.png"},
+    {"avatar":"Alexandra", "demeanor":"Thoughtful", "icon":"/static/Alexandra.png"},
+    {"avatar":"Emily", "demeanor":"Happy", "icon":"/static/Emily.png"},
+    {"avatar":"Robert", "demeanor":"Surprised", "icon":"/static/Robert.png"}
+  ]
 }
