@@ -16,65 +16,85 @@
 #   - Fails fast if dependencies are missing or app fails to start.
 # =============================================================================
 
+clear
 set -euo pipefail
-clear; 
 
-# ====== PATH SETUP ======
+# ====== CONFIG / PATHS ======
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 REQ_FILE="$REPO_ROOT/requirements.txt"
 REQ_DEV_FILE="$REPO_ROOT/requirements-dev.txt"
 
+# ANSI colors
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+YELLOW="\033[1;33m"
+NC="\033[0m"
+
 # ====== PRE-FLIGHT CHECKS ======
-command -v python3 >/dev/null 2>&1 || { echo "❌ Python 3 not found."; exit 1; }
-command -v uvicorn >/dev/null 2>&1 || { echo "❌ uvicorn not found. Install with: pip install uvicorn"; exit 1; }
+command -v python3 >/dev/null 2>&1 || { echo -e "${RED}❌ Python 3 not found.${NC}"; exit 1; }
+
+# Confirm importlib.util is actually importable (no false positives)
+python3 - <<'EOF'
+import sys
+try:
+    import importlib.util
+except ImportError:
+    sys.exit("❌ 'importlib.util' not available — possible shadowing.")
+EOF
+
+# Ensure uvicorn is installed globally (for the check)
+if ! python3 -c "import uvicorn" >/dev/null 2>&1; then
+    echo -e "${YELLOW}📥 Installing uvicorn for verification...${NC}"
+    pip install uvicorn
+fi
 
 if [[ ! -f "$REQ_FILE" ]]; then
-    echo "❌ requirements.txt not found in repo root: $REQ_FILE"
+    echo -e "${RED}❌ requirements.txt not found in repo root: $REQ_FILE${NC}"
     exit 1
 fi
 
 # ====== CREATE TEMP VENV ======
 TMP_VENV=$(mktemp -d /tmp/permitflow_venv_XXXX)
-echo "📦 Creating temporary virtual environment at $TMP_VENV..."
+echo -e "${YELLOW}📦 Creating temporary virtual environment at $TMP_VENV...${NC}"
 python3 -m venv "$TMP_VENV"
 # shellcheck disable=SC1090
 source "$TMP_VENV/bin/activate"
 
 # ====== INSTALL DEPENDENCIES ======
-echo "📥 Installing dependencies from requirements.txt..."
+echo -e "${YELLOW}📥 Installing dependencies from requirements.txt...${NC}"
 pip install --upgrade pip
 pip install -r "$REQ_FILE"
 
 # ====== RUN UVICORN IMPORT CHECK ======
-echo "🚀 Starting uvicorn to verify imports..."
+echo -e "${YELLOW}🚀 Starting uvicorn to verify imports...${NC}"
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload &
 
 UVICORN_PID=$!
 sleep 3  # Give it a moment to start
 
 if ps -p $UVICORN_PID > /dev/null; then
-    echo "✅ App started successfully — no missing modules detected."
+    echo -e "${GREEN}✅ App started successfully — no missing modules detected.${NC}"
     kill $UVICORN_PID
 else
-    echo "❌ App failed to start — check logs above for missing imports."
+    echo -e "${RED}❌ App failed to start — check logs above for missing imports.${NC}"
     deactivate || true
     rm -rf "$TMP_VENV"
     exit 1
 fi
 
 # ====== CLEANUP ======
-echo "🧹 Cleaning up temporary environment..."
+echo -e "${YELLOW}🧹 Cleaning up temporary environment...${NC}"
 deactivate || true
 rm -rf "$TMP_VENV"
 
 # ====== RESTORE DEV ENVIRONMENT ======
 if [[ -f "$REQ_DEV_FILE" ]]; then
-    echo "🔄 Restoring local dev environment from requirements-dev.txt..."
+    echo -e "${YELLOW}🔄 Restoring local dev environment from requirements-dev.txt...${NC}"
     pip install -r "$REQ_DEV_FILE"
-    echo "✅ Dev environment restored."
+    echo -e "${GREEN}✅ Dev environment restored.${NC}"
 else
-    echo "ℹ️ No requirements-dev.txt found — skipping dev restore."
+    echo -e "${YELLOW}ℹ️ No requirements-dev.txt found — skipping dev restore.${NC}"
 fi
 
-echo "✅ Verification complete. Safe to deploy."
+echo -e "${GREEN}✅ Verification complete. Safe to deploy.${NC}"

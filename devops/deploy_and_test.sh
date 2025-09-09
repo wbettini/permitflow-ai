@@ -8,16 +8,16 @@
 # - Provide clear, color-coded output for quick status checks.
 #
 # Usage:
-#   ./devops/deploy_and_test.sh          # Deploy + test
+#   ./devops/deploy_and_test.sh              # Deploy + test
 #   ./devops/deploy_and_test.sh --test-only  # Test only, no deploy
 #
 # Prerequisites:
 # - Azure CLI logged in (`az login`)
-# - Python 3.12+ with `requests` and `websocket-client` installed
+# - Python 3.12+ (script will auto-install requests + websocket-client if missing)
 # =============================================================================
 
+clear
 set -euo pipefail
-clear;
 
 # ====== CONFIG ======
 APP_NAME="permitflow-ai-demo"
@@ -37,12 +37,25 @@ NC="\033[0m"
 command -v az >/dev/null 2>&1 || { echo -e "${RED}Azure CLI not found. Install Azure CLI first.${NC}"; exit 1; }
 command -v python3 >/dev/null 2>&1 || { echo -e "${RED}Python 3 not found.${NC}"; exit 1; }
 
-# Ensure Python deps for smoke tests are present
-python3 - <<'EOF' || { echo -e "${RED}Missing Python dependencies. Install with: pip install requests websocket-client${NC}"; exit 1; }
-import importlib
-for pkg in ("requests", "websocket"):
-    if importlib.util.find_spec(pkg) is None:
-        raise SystemExit(f"Missing required Python package: {pkg}")
+# Confirm importlib.util is actually importable (no false positives)
+python3 - <<'EOF'
+import sys
+try:
+    import importlib.util
+except ImportError:
+    sys.exit("❌ 'importlib.util' not available — possible shadowing.")
+EOF
+
+# Ensure Python deps for smoke tests are present (auto-install if missing)
+python3 - <<'EOF'
+import importlib.util, subprocess, sys
+missing = []
+for pkg, import_name in [("requests", "requests"), ("websocket-client", "websocket")]:
+    if importlib.util.find_spec(import_name) is None:
+        missing.append(pkg)
+if missing:
+    print(f"📥 Installing missing packages: {', '.join(missing)}")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", *missing])
 EOF
 
 # ====== FUNCTIONS ======
