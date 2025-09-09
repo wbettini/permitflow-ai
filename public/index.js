@@ -27,6 +27,11 @@ let selected_avatar = {
   FLOWBOT_AVATAR_DEMEANOR: defaults.ALTERNATE_AVATARS[0].demeanor
 };
 
+// ===== Connection State =====
+let ws;
+let eventSource;
+let usingSSE = false;
+
 document.addEventListener('DOMContentLoaded', () => {
   const heading = document.getElementById('chat-heading');
   const dropdown = document.getElementById('avatar-dropdown');
@@ -37,6 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const messagesDiv = document.getElementById('messages');
   const input = document.getElementById('input');
   const sendBtn = document.getElementById('send-btn');
+
+  // Optional: connection status indicator
+  const statusIndicator = document.createElement('div');
+  statusIndicator.id = "connection-status";
+  statusIndicator.style.fontSize = "0.8em";
+  statusIndicator.style.marginBottom = "5px";
+  messagesDiv.parentNode.insertBefore(statusIndicator, messagesDiv);
 
   // Toggle dropdown
   dropdownSelected.addEventListener('click', () => {
@@ -77,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
         item.innerHTML = `<img src="${av.icon}" alt="${av.avatar}"><span>${av.avatar} — ${av.demeanor}</span>`;
         item.addEventListener('click', () => {
           const oldName = selected_avatar.FLOWBOT_PREFERRED_NAME;
-
           selected_avatar = {
             FLOWBOT_PREFERRED_NAME: av.avatar,
             FLOWBOT_AVATAR_ICON: av.icon,
@@ -86,8 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
           setCookie('selectedAvatar', av.avatar, 365);
           updateSelectedUI();
           dropdown.classList.remove('open');
-
-          // Add a system message noting the change
           addSystemMessage(`(${oldName} helper now changed to ${selected_avatar.FLOWBOT_PREFERRED_NAME}...)`);
         });
         dropdownList.appendChild(item);
@@ -106,79 +115,134 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // ===== WebSocket Chat Logic =====
-      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-      const ws = new WebSocket(
-        `${protocol}://${window.location.host}/ws/flowbot?avatar=${encodeURIComponent(selected_avatar.FLOWBOT_PREFERRED_NAME)}`
-      );
-
-      ws.onmessage = (event) => {
-        addMessage(event.data, 'bot');
-      };
-
-      function sendMessage() {
-        const text = input.value.trim();
-        if (text) {
-          ws.send(text);
-          addMessage(text, 'user');
-          input.value = '';
-        }
-      }
-
-      function addMessage(text, sender) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `msg ${sender}`;
-
-        const avatar = document.createElement('img');
-        avatar.className = 'avatar';
-        avatar.src = sender === 'bot'
-          ? (selected_avatar.FLOWBOT_AVATAR_ICON || defaults.ALTERNATE_AVATARS[0].icon)
-          : '/static/user-avatar.png';
-        avatar.alt = sender === 'bot'
-          ? selected_avatar.FLOWBOT_PREFERRED_NAME
-          : 'You';
-
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-        bubble.textContent = text;
-
-        msgDiv.appendChild(avatar);
-        msgDiv.appendChild(bubble);
-        messagesDiv.appendChild(msgDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }
-
-      function addSystemMessage(text) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'msg system';
-
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble system-bubble';
-        bubble.textContent = text;
-
-        msgDiv.appendChild(bubble);
-        messagesDiv.appendChild(msgDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }
-
-      // Send on Enter key
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-      });
-
-      // Send on button click
-      sendBtn.addEventListener('click', sendMessage);
+      // Start connection
+      connectWebSocket();
     })
     .catch(err => {
       console.error('Error loading site properties:', err);
       updateSelectedUI();
     });
 
-  // ===== Helper to update UI with selected avatar =====
+  // ===== Connection Logic =====
+  function connectWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    ws = new WebSocket(
+      `${protocol}://${window.location.host}/ws/flowbot?avatar=${encodeURIComponent(selected_avatar.FLOWBOT_PREFERRED_NAME)}`
+    );
+
+    ws.onopen = () => {
+      usingSSE = false;
+      updateStatus("Connected via WebSocket", "green");
+    };
+
+    ws.onmessage = (event) => {
+      addMessage(event.data, 'bot');
+    };
+
+    ws.onerror = () => {
+      console.warn("WebSocket error — falling back to SSE");
+      connectSSE();
+    };
+
+    ws.onclose = () => {
+      if (!usingSSE) {
+        console.warn("WebSocket closed — falling back to SSE");
+        connectSSE();
+      }
+    };
+  }
+
+  function connectSSE() {
+    usingSSE = true;
+    eventSource = new EventSource("/events");
+
+    eventSource.onopen = () => {
+      updateStatus("Connected via SSE", "orange");
+    };
+
+    eventSource.onmessage = (event) => {
+      addMessage(event.data, 'bot');
+    };
+
+    eventSource.onerror = () => {
+      updateStatus("Disconnected", "red");
+      eventSource.close();
+    };
+  }
+
+  // ===== Send Message =====
+  function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    if (!usingSSE && ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(text);
+    } else {
+      fetch("/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+    }
+    addMessage(text, 'user');
+    input.value = '';
+  }
+
+  // ===== UI Helpers =====
+  function addMessage(text, sender) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `msg ${sender}`;
+
+    const avatar = document.createElement('img');
+    avatar.className = 'avatar';
+    avatar.src = sender === 'bot'
+      ? (selected_avatar.FLOWBOT_AVATAR_ICON || defaults.ALTERNATE_AVATARS[0].icon)
+      : '/static/user-avatar.png';
+    avatar.alt = sender === 'bot'
+      ? selected_avatar.FLOWBOT_PREFERRED_NAME
+      : 'You';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+
+    msgDiv.appendChild(avatar);
+    msgDiv.appendChild(bubble);
+    messagesDiv.appendChild(msgDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function addSystemMessage(text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg system';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble system-bubble';
+    bubble.textContent = text;
+
+    msgDiv.appendChild(bubble);
+    messagesDiv.appendChild(msgDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
   function updateSelectedUI() {
     heading.textContent = `💬 Chat with ${selected_avatar.FLOWBOT_PREFERRED_NAME}`;
     selectedImg.src = selected_avatar.FLOWBOT_AVATAR_ICON;
     selectedName.textContent = `${selected_avatar.FLOWBOT_PREFERRED_NAME} — ${selected_avatar.FLOWBOT_AVATAR_DEMEANOR}`;
     window.currentBotAvatar = selected_avatar.FLOWBOT_AVATAR_ICON;
   }
+
+  function updateStatus(text, color) {
+    statusIndicator.textContent = text;
+    statusIndicator.style.color = color;
+  }
+
+  // ===== Event Listeners =====
+  sendBtn.addEventListener("click", sendMessage);
+
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  });
 });

@@ -1,5 +1,5 @@
 # test_flowbot_multi_sme.py
-from agents.flowbot.flowbot import FlowBot
+from app.agents.flowbot.flowbot import FlowBot
 from core.state_manager import StateManager
 
 required_fields = ["service_name", "owner", "data_classification"]

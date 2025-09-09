@@ -1,6 +1,6 @@
 from core.state_manager import StateManager
-from agents.flowbot.flowbot import FlowBot
-from agents.smes.cyber_sme import get_cyber_sme_tool
+from app.agents.flowbot.flowbot import FlowBot
+from app.agents.smes.cyber_sme import get_cyber_sme_tool
 from core.human_review import HumanReviewer
 from core.config_loader import load_tollgate_config
 

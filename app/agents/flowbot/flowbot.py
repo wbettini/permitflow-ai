@@ -2,9 +2,9 @@ import json
 import re
 from pathlib import Path
 from langchain_config import get_llm, flowbot_conversational_prompt
-from agents.smes.cyber_sme import get_cyber_sme_tool
-from agents.smes.infra_sme import get_infra_sme_tool
-from core.site_properties import get_site_property
+from app.agents.smes.cyber_sme import get_cyber_sme_tool
+from app.agents.smes.infra_sme import get_infra_sme_tool
+from app.core.site_properties import get_site_property
 
 class FlowBot:
     def __init__(self, state_manager, required_fields, prompts_file="permitFlowDb/tollgate_prompts.json"):

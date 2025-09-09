@@ -1,4 +1,4 @@
-from agents.flowbot.flowbot import FlowBot
+from app.agents.flowbot.flowbot import FlowBot
 from core.state_manager import StateManager  # <-- correct import path
 
 # Define the required fields for this test

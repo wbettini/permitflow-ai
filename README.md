@@ -18,7 +18,7 @@ Powered by **FlowBot**, your AI process navigator, it guides applicants step‑b
 ### **SME Agents**
 - Domain‑specific reviewers (e.g., Cybersecurity, Infrastructure, Finance).
 - Each SME returns a decision (`approve` / `decline`) and a justification.
-- Configurable via `tollgates.yaml` — no code changes required to add/remove SMEs.
+- Configurable via `app/core/tollgates.yaml` — no code changes required to add/remove SMEs.
 
 ### **Human‑in‑the‑Loop**
 - Final review stage for accountability.

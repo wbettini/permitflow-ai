@@ -1,0 +1,36 @@
+# ===== PermitFlow Development Dependencies =====
+# Install with: pip install -r requirements.txt -r requirements-dev.txt
+
+# --- Interactive Development ---
+ipython==9.4.0
+ipykernel==6.29.5
+jupyterlab==4.4.4
+jupyterlab_server==2.27.3
+jupyterlab_git==0.51.2
+jupyterlab_pygments==0.3.0
+jupyter_client==8.6.3
+jupyter_core==5.8.1
+jupyter_server==2.16.0
+jupyter_server_terminals==0.5.3
+jupyter-events==0.12.0
+notebook_shim==0.2.4
+nbconvert==7.16.6
+nbformat==5.10.4
+nbclient==0.10.2
+nbdime==4.0.2
+
+# --- Data Science / Analysis ---
+numpy==2.3.1
+pandas==2.3.1
+matplotlib==3.10.3
+matplotlib-inline==0.1.7
+seaborn==0.13.2
+scikit-learn==1.7.0
+scipy==1.16.0
+plotly==6.2.0
+joblib==1.5.1
+
+# --- Utilities & Debugging ---
+rich==14.1.0
+python-dateutil==2.9.0.post0
+pytz==2025.2

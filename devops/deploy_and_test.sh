@@ -1,23 +1,67 @@
 #!/usr/bin/env bash
-set -e
+# =============================================================================
+# deploy_and_test.sh — Deploy PermitFlow-AI to Azure and run smoke tests.
+#
+# Responsibilities:
+# - Deploy the FastAPI app to Azure App Service.
+# - Run HTTP and WebSocket smoke tests against the deployed app.
+# - Provide clear, color-coded output for quick status checks.
+#
+# Usage:
+#   ./devops/deploy_and_test.sh          # Deploy + test
+#   ./devops/deploy_and_test.sh --test-only  # Test only, no deploy
+#
+# Prerequisites:
+# - Azure CLI logged in (`az login`)
+# - Python 3.12+ with `requests` and `websocket-client` installed
+# =============================================================================
+
+set -euo pipefail
+clear;
 
 # ====== CONFIG ======
 APP_NAME="permitflow-ai-demo"
 RESOURCE_GROUP="PermitFlowAI-RG"
 LOCATION="eastus2"
 SKU="F1"
-BASE_URL="https://$APP_NAME.azurewebsites.net"
+BASE_URL="https://${APP_NAME}.azurewebsites.net"
 WS_PATH="/ws/flowbot"
 
-# ====== MAIN ======
+# ANSI colors for Bash output
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+YELLOW="\033[1;33m"
+NC="\033[0m"
+
+# ====== PRE-FLIGHT CHECKS ======
+command -v az >/dev/null 2>&1 || { echo -e "${RED}Azure CLI not found. Install Azure CLI first.${NC}"; exit 1; }
+command -v python3 >/dev/null 2>&1 || { echo -e "${RED}Python 3 not found.${NC}"; exit 1; }
+
+# Ensure Python deps for smoke tests are present
+python3 - <<'EOF' || { echo -e "${RED}Missing Python dependencies. Install with: pip install requests websocket-client${NC}"; exit 1; }
+import importlib
+for pkg in ("requests", "websocket"):
+    if importlib.util.find_spec(pkg) is None:
+        raise SystemExit(f"Missing required Python package: {pkg}")
+EOF
+
+# ====== FUNCTIONS ======
 run_smoke_tests() {
 python3 - <<EOF
+"""
+Smoke tests for PermitFlow-AI deployment.
+
+Checks:
+- HTTP GET /, /health, /docs
+- Full WebSocket conversation flow through TG1 → TG3
+"""
+
 import requests, websocket, ssl, time
 
 BASE_URL = "$BASE_URL"
 WS_PATH = "$WS_PATH"
 
-# ANSI colors
+# ANSI colors for Python output
 GREEN = "\033[0;32m"
 RED = "\033[0;31m"
 YELLOW = "\033[1;33m"
@@ -36,6 +80,7 @@ def fmt(tag):
     return colors[tag].ljust(STATUS_WIDTH + len(colors[tag]) - 4)
 
 def check_http(path):
+    """Perform HTTP GET and report status/time."""
     url = f"{BASE_URL}{path}"
     start = time.perf_counter()
     try:
@@ -52,6 +97,7 @@ def check_http(path):
         print(f"{fmt('error')}{path.ljust(PATH_WIDTH)}→ {e}  ({elapsed:.1f} ms)")
 
 def check_websocket_full_flow():
+    """Connect to WS and walk through TG1 → TG3."""
     ws_url = BASE_URL.replace("https", "wss") + WS_PATH
     print(f"{fmt('info')}{'WebSocket connect'.ljust(PATH_WIDTH)}→ {ws_url}")
     start = time.perf_counter()
@@ -60,38 +106,23 @@ def check_websocket_full_flow():
         handshake_time = (time.perf_counter() - start) * 1000
         print(f"{fmt('ok')}{'Handshake'.ljust(PATH_WIDTH)}→ {handshake_time:.1f} ms")
 
-        # Step 1: Permit type
-        ws.send("Permit to Design")
-        reply = ws.recv()
-        print(f"{fmt('ok')}{'TG1 start'.ljust(PATH_WIDTH)}→ {reply}")
+        steps = [
+            ("Permit to Design", "TG1 start"),
+            ("The purpose is to expedite tollgate approvals for project managers", "Purpose reply"),
+            ("The service name is PermitFlow", "Service name reply"),
+            ("The owner is Bill Bettini", "Owner reply"),
+            ("The data classification is non private", "Data class reply"),
+        ]
 
-        # Step 2: Purpose
-        ws.send("The purpose is to expedite tollgate approvals for project managers")
-        reply = ws.recv()
-        print(f"{fmt('ok')}{'Purpose reply'.ljust(PATH_WIDTH)}→ {reply}")
+        for msg, label in steps:
+            ws.send(msg)
+            reply = ws.recv()
+            print(f"{fmt('ok')}{label.ljust(PATH_WIDTH)}→ {reply}")
 
-        # Step 3: Service name
-        ws.send("The service name is PermitFlow")
-        reply = ws.recv()
-        print(f"{fmt('ok')}{'Service name reply'.ljust(PATH_WIDTH)}→ {reply}")
-
-        # Step 4: Owner
-        ws.send("The owner is Bill Bettini")
-        reply = ws.recv()
-        print(f"{fmt('ok')}{'Owner reply'.ljust(PATH_WIDTH)}→ {reply}")
-
-        # Step 5: Data classification
-        ws.send("The data classification is non private")
-        reply = ws.recv()
-        print(f"{fmt('ok')}{'Data class reply'.ljust(PATH_WIDTH)}→ {reply}")
-
-        # Step 6: SME review / TG2
-        reply = ws.recv()
-        print(f"{fmt('ok')}{'TG2 SME review'.ljust(PATH_WIDTH)}→ {reply}")
-
-        # Step 7: TG3 / Final approval
-        reply = ws.recv()
-        print(f"{fmt('ok')}{'TG3 final'.ljust(PATH_WIDTH)}→ {reply}")
+        # TG2 and TG3 replies
+        for label in ("TG2 SME review", "TG3 final"):
+            reply = ws.recv()
+            print(f"{fmt('ok')}{label.ljust(PATH_WIDTH)}→ {reply}")
 
         ws.close()
     except Exception as e:
@@ -105,7 +136,8 @@ check_websocket_full_flow()
 EOF
 }
 
-if [[ "$1" == "--test-only" ]]; then
+# ====== MAIN FLOW ======
+if [[ "${1:-}" == "--test-only" ]]; then
     echo -e "${YELLOW}🔍 Running smoke tests only (no deploy)...${NC}"
     run_smoke_tests
 else

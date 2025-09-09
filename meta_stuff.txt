@@ -2,12 +2,14 @@
 
 clear; az webapp log tail --name permitflow-ai-demo --resource-group PermitFlowAI-RG
 
-DO NOT USE:
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+For breakpoints, live reload, and step‑through debugging in Codespaces:
+========================================================================
+clear; uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
+For prod:
+========================================================================
+clear; gunicorn -c gunicorn_conf.py app.main:app
 
-USE:
-gunicorn -c gunicorn_conf.py main:app
 https://vigilant-acorn-qx7r9744qhxp4-8000.app.github.dev/health
 https://vigilant-acorn-qx7r9744qhxp4-8000.app.github.dev/docs
 

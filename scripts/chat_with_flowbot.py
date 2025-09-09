@@ -6,7 +6,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from core.state_manager import StateManager
-from agents.flowbot.flowbot import FlowBot
+from app.agents.flowbot.flowbot import FlowBot
 
 # Define the required fields for the application
 required_fields = ["service_name", "owner", "data_classification"]
