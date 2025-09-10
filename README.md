@@ -44,7 +44,7 @@ permitflow-ai/ ├── agents/ │   ├── flowbot/flowbot.py       # Flow
 
 2. **Run the app**  
    ```bash
-   gunicorn -c gunicorn_conf.py main:app
+   gunicorn -c gunicorn_conf.py app.main:app
 
 📈 Roadmap
 - [ ] Add more SME agent types with domain‑specific logic.

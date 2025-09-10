@@ -22,13 +22,18 @@ router = APIRouter(tags=["FlowBot Chat"])
 
 # ===== WebSocket Endpoint =====
 @router.websocket("/ws/flowbot")
-async def websocket_flowbot(websocket: WebSocket, avatar: str = Query(None)):
+async def websocket_flowbot(
+    websocket: WebSocket,
+    avatar: str = Query(None, description="Avatar name to personalize the bot persona"),
+    session: str = Query(..., description="Unique session/room identifier")
+):
     """
     Handle a WebSocket connection for FlowBot chat.
 
     Args:
         websocket (WebSocket): The active WebSocket connection.
         avatar (str, optional): Avatar name to personalize the bot persona.
+        session (str): Unique session/room identifier for isolating conversations.
 
     Flow:
         1. Log connection open.
@@ -36,21 +41,25 @@ async def websocket_flowbot(websocket: WebSocket, avatar: str = Query(None)):
         3. Log connection close in finally block.
     """
     client_host = websocket.client.host if websocket.client else "unknown"
-    logger.info(f"[WS] Connection opened from {client_host} (avatar={avatar})")
+    logger.info(f"[WS][{session}] Connection opened from {client_host} (avatar={avatar})")
     try:
-        await flowbot_service.handle_ws_connection(websocket, avatar)
+        await flowbot_service.handle_ws_connection(websocket, avatar, session_id=session)
     finally:
-        logger.info(f"[WS] Connection closed from {client_host} (avatar={avatar})")
+        logger.info(f"[WS][{session}] Connection closed from {client_host} (avatar={avatar})")
 
 
 # ===== SSE Endpoint =====
 @router.get("/events")
-async def sse_events(request: Request):
+async def sse_events(
+    request: Request,
+    session: str = Query(..., description="Unique session/room identifier")
+):
     """
     Handle an SSE (Server-Sent Events) connection for FlowBot chat.
 
     Args:
         request (Request): The incoming HTTP request.
+        session (str): Unique session/room identifier for isolating event streams.
 
     Returns:
         StreamingResponse: Continuous stream of chat messages.
@@ -60,28 +69,33 @@ async def sse_events(request: Request):
         - Connection close logging happens in the generator's finally block.
     """
     client_host = request.client.host if request.client else "unknown"
-    logger.info(f"[SSE] Connection opened from {client_host}")
+    logger.info(f"[SSE][{session}] Connection opened from {client_host}")
     return StreamingResponse(
-        flowbot_service.sse_event_stream(),
+        flowbot_service.sse_event_stream(session_id=session),
         media_type="text/event-stream"
     )
 
 
 # ===== SSE Send Endpoint =====
 @router.post("/send")
-async def send_message(payload: dict, request: Request):
+async def send_message(
+    payload: dict,
+    request: Request,
+    session: str = Query(..., description="Unique session/room identifier")
+):
     """
-    Accept a message via HTTP POST and broadcast it to all SSE clients.
+    Accept a message via HTTP POST and broadcast it to all SSE clients in the same session.
 
     Args:
         payload (dict): JSON body containing 'text' key.
         request (Request): The incoming HTTP request.
+        session (str): Unique session/room identifier for isolating broadcasts.
 
     Returns:
         dict: Status confirmation.
     """
     client_host = request.client.host if request.client else "unknown"
     text = payload.get("text", "")
-    logger.info(f"[SEND] Message from {client_host}: {text!r}")
-    await flowbot_service.handle_sse_send(text)
+    logger.info(f"[SEND][{session}] Message from {client_host}: {text!r}")
+    await flowbot_service.handle_sse_send(session_id=session, text=text)
     return {"status": "sent"}

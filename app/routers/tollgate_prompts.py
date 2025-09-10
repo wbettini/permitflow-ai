@@ -3,7 +3,7 @@ tollgate_prompts.py — Router for tollgate prompts endpoint.
 """
 
 from fastapi import APIRouter
-from ..services import tollgate_service
+from app.services import tollgate_service
 
 router = APIRouter(tags=["Tollgate Prompts"])
 

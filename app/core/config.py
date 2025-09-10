@@ -27,7 +27,7 @@ SITE_PROPERTIES_FILE = DB_DIR / "site_properties.json"
 TOLLGATE_PROMPTS_FILE = DB_DIR / "tollgate_prompts.json"
 
 # Path-safe reference to tollgates.yaml in the same folder as this file
-TOLLGATE_PROMPTS_FILE = Path(__file__).parent / "tollgates.yaml"
+# TOLLGATE_PROMPTS_FILE = Path(__file__).parent / "tollgates.yaml"
 
 # ===== Default Site Properties =====
 DEFAULTS = {

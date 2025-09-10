@@ -21,13 +21,19 @@
         <h2 id="chat-heading"></h2>
         <div class="custom-dropdown" id="avatar-dropdown">
           <div class="dropdown-selected" id="dropdown-selected">
-            <!-- Default src prevents broken image before JS runs -->
             <img src="/static/flowbot-avatar.png" alt="Selected Avatar" class="dropdown-avatar">
             <span class="dropdown-name"></span>
           </div>
           <div class="dropdown-list" id="dropdown-list"></div>
         </div>
       </div>
+
+      <!-- Connection Status + Session ID -->
+      <div id="connection-status">
+        <span id="status-text"></span>
+        <span id="session-id-badge"></span>
+      </div>
+
       <div id="messages"></div>
       <div id="inputArea">
         <input id="input" type="text" placeholder="Type your message..." />

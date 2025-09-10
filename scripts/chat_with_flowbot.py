@@ -14,7 +14,7 @@ required_fields = ["service_name", "owner", "data_classification"]
 def main():
     # Create StateManager and FlowBot
     state = StateManager()
-    bot = FlowBot(state, required_fields, prompts_file="permitFlowDb/tollgate_prompts.json")
+    bot = FlowBot(state, required_fields, prompts_file="app/permitFlowDb/tollgate_prompts.json")
 
     # Start the conversation
     print(bot.start("cloud service permit"))
