@@ -1,33 +1,26 @@
 // ─────────────────────────────────────────────────────────────
-// 🍪 Cookie Utilities
+// 🍪 Session & Cookie Utilities
 // ─────────────────────────────────────────────────────────────
-function setCookie(name, value, days) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${value};expires=${expires};path=/`;
-}
-
-function getCookie(name) {
-  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
-  return match ? match[2] : null;
-}
-
-// ─────────────────────────────────────────────────────────────
-// 🆔 Session Management
-// ─────────────────────────────────────────────────────────────
-function generateSessionId() {
-  return crypto.randomUUID();
-}
-
-function getSessionId() {
-  let sessionId = getCookie("flowbotSessionId");
-  if (!sessionId) {
-    sessionId = generateSessionId();
-    setCookie("flowbotSessionId", sessionId, 7);
+const SessionManager = {
+  setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${value};expires=${expires};path=/`;
+  },
+  getCookie(name) {
+    const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+    return match ? match[2] : null;
+  },
+  getSessionId() {
+    let sessionId = this.getCookie("flowbotSessionId");
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      this.setCookie("flowbotSessionId", sessionId, 7);
+    }
+    return sessionId;
   }
-  return sessionId;
-}
+};
 
-const sessionId = getSessionId();
+const sessionId = SessionManager.getSessionId();
 
 // ─────────────────────────────────────────────────────────────
 // ⚙️ Default Site Configuration
@@ -55,11 +48,82 @@ let selected_avatar = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// 🌐 Connection State
+// 🌐 Connection Manager with Message Queue & Injected UI Hooks
 // ─────────────────────────────────────────────────────────────
-let ws = null;
-let eventSource = null;
-let usingSSE = false;
+const ConnectionManager = {
+  ws: null,
+  eventSource: null,
+  usingSSE: false,
+  messageQueue: [],
+  uiReady: false,
+  addMessageFn: null,
+  updateStatusFn: null,
+
+  isConnected() {
+    return this.ws && this.ws.readyState === WebSocket.OPEN;
+  },
+
+  flushQueue() {
+    if (this.addMessageFn) {
+      this.messageQueue.forEach(msg => this.addMessageFn(msg, "bot"));
+    }
+    this.messageQueue = [];
+  },
+
+  handleIncomingMessage(data) {
+    if (this.uiReady && this.addMessageFn) {
+      this.addMessageFn(data, "bot");
+    } else {
+      this.messageQueue.push(data);
+    }
+  },
+
+  connect() {
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const avatarParam = encodeURIComponent(selected_avatar.FLOWBOT_PREFERRED_NAME);
+    this.ws = new WebSocket(`${protocol}://${window.location.host}/ws/flowbot?avatar=${avatarParam}&session=${sessionId}`);
+
+    this.ws.onopen = () => {
+      this.usingSSE = false;
+      if (this.updateStatusFn) this.updateStatusFn("Connected via WebSocket", "green");
+      console.log(`[WS] Connected. Session ID: ${sessionId}`);
+    };
+
+    this.ws.onmessage = (event) => {
+      console.log("[WS] Received:", event.data);
+      this.handleIncomingMessage(event.data);
+    };
+
+    this.ws.onerror = () => {
+      console.warn("WebSocket error — falling back to SSE");
+      this.connectSSE();
+    };
+
+    this.ws.onclose = () => {
+      if (!this.usingSSE) {
+        console.warn("WebSocket closed — falling back to SSE");
+        this.connectSSE();
+      }
+    };
+  },
+
+  connectSSE() {
+    this.usingSSE = true;
+    this.eventSource = new EventSource(`/events?session=${sessionId}`);
+
+    this.eventSource.onopen = () => {
+      if (this.updateStatusFn) this.updateStatusFn("Connected via SSE", "orange");
+    };
+    this.eventSource.onmessage = (event) => {
+      console.log("[SSE] Received:", event.data);
+      this.handleIncomingMessage(event.data);
+    };
+    this.eventSource.onerror = () => {
+      if (this.updateStatusFn) this.updateStatusFn("Disconnected", "red");
+      this.eventSource.close();
+    };
+  }
+};
 
 // ─────────────────────────────────────────────────────────────
 // 🚀 DOM Ready
@@ -86,7 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
   dropdownSelected.addEventListener("click", () => {
     dropdown.classList.toggle("open");
   });
-
   document.addEventListener("click", (e) => {
     if (!dropdown.contains(e.target)) {
       dropdown.classList.remove("open");
@@ -98,12 +161,11 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(res => res.json())
     .then(data => {
       const props = { ...defaults, ...data };
-
       if (!Array.isArray(props.ALTERNATE_AVATARS) || props.ALTERNATE_AVATARS.length === 0) {
         props.ALTERNATE_AVATARS = defaults.ALTERNATE_AVATARS;
       }
 
-      const savedAvatarName = getCookie("selectedAvatar");
+      const savedAvatarName = SessionManager.getCookie("selectedAvatar");
       const initial = props.ALTERNATE_AVATARS.find(a => a.avatar === savedAvatarName) || props.ALTERNATE_AVATARS[0];
 
       selected_avatar = {
@@ -123,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
             FLOWBOT_AVATAR_ICON: av.icon,
             FLOWBOT_AVATAR_DEMEANOR: av.demeanor
           };
-          setCookie("selectedAvatar", av.avatar, 365);
+          SessionManager.setCookie("selectedAvatar", av.avatar, 365);
           updateSelectedUI();
           dropdown.classList.remove("open");
           addSystemMessage(`(${oldName} helper now changed to ${selected_avatar.FLOWBOT_PREFERRED_NAME}...)`);
@@ -142,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      connectWebSocket();
+      ConnectionManager.connect();
     })
     .catch(err => {
       console.error("Error loading site properties:", err);
@@ -150,73 +212,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   // ─────────────────────────────────────────────────────────────
-  // 🔌 Connection Logic
-  // ─────────────────────────────────────────────────────────────
-  function connectWebSocket() {
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const avatarParam = encodeURIComponent(selected_avatar.FLOWBOT_PREFERRED_NAME);
-    ws = new WebSocket(`${protocol}://${window.location.host}/ws/flowbot?avatar=${avatarParam}&session=${sessionId}`);
-
-    ws.onopen = () => {
-      usingSSE = false;
-      updateStatus("Connected via WebSocket", "green");
-      console.log(`[WS] Connected. Session ID: ${sessionId}`);
-    };
-
-    ws.onmessage = (event) => {
-      addMessage(event.data, "bot");
-    };
-
-    ws.onerror = () => {
-      console.warn("WebSocket error — falling back to SSE");
-      connectSSE();
-    };
-
-    ws.onclose = () => {
-      if (!usingSSE) {
-        console.warn("WebSocket closed — falling back to SSE");
-        connectSSE();
-      }
-    };
-  }
-
-  function connectSSE() {
-    usingSSE = true;
-    eventSource = new EventSource(`/events?session=${sessionId}`);
-
-    eventSource.onopen = () => {
-      updateStatus("Connected via SSE", "orange");
-    };
-
-    eventSource.onmessage = (event) => {
-      addMessage(event.data, "bot");
-    };
-
-    eventSource.onerror = () => {
-      updateStatus("Disconnected", "red");
-      eventSource.close();
-    };
-  }
-
-  // ─────────────────────────────────────────────────────────────
-  // 📤 Send Message
+  // 📤 Send Message with Lazy Reconnect
   // ─────────────────────────────────────────────────────────────
   function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
 
-    if (!usingSSE && ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(text);
-    } else {
-      fetch(`/send?session=${sessionId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
-      });
-    }
-
     addMessage(text, "user");
     input.value = "";
+
+    if (!ConnectionManager.isConnected()) {
+      console.warn("Disconnected. Reconnecting before sending...");
+      ConnectionManager.connect();
+      setTimeout(() => {
+        if (ConnectionManager.isConnected()) {
+          ConnectionManager.ws.send(text);
+        } else {
+          fetch(`/send?session=${sessionId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text })
+          });
+        }
+      }, 1000);
+    } else {
+      ConnectionManager.ws.send(text);
+    }
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -285,10 +306,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🖱️ Event Listeners for Sending Messages
   // ─────────────────────────────────────────────────────────────
   sendBtn.addEventListener("click", sendMessage);
-
   input.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
       sendMessage();
     }
   });
+
+  // Inject UI functions into ConnectionManager
+  ConnectionManager.addMessageFn = addMessage;
+  ConnectionManager.updateStatusFn = updateStatus;
+
+  // Mark UI as ready and flush any queued messages
+  ConnectionManager.uiReady = true;
+  ConnectionManager.flushQueue();
 });
