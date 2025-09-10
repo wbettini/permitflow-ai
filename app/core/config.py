@@ -22,9 +22,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # This can be moved or replaced without touching service code.
 DB_DIR = BASE_DIR / "permitFlowDb"
 
+GENERAL_INTENTS_PATH = DB_DIR / "general_intents.json"
+
+def load_general_intents():
+    with open(GENERAL_INTENTS_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+GENERAL_INTENTS = load_general_intents()
+
+
 # Specific file paths for current JSON storage
 SITE_PROPERTIES_FILE = DB_DIR / "site_properties.json"
-TOLLGATE_PROMPTS_FILE = DB_DIR / "tollgate_prompts.json"
+#TOLLGATE_PROMPTS_FILE = DB_DIR / "tollgate_prompts.json"
 
 # Path-safe reference to tollgates.yaml in the same folder as this file
 # TOLLGATE_PROMPTS_FILE = Path(__file__).parent / "tollgates.yaml"

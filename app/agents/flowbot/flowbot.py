@@ -1,200 +1,138 @@
-import json
-import re
-from pathlib import Path
-from langchain_config import get_llm, flowbot_conversational_prompt
-from app.agents.smes.cyber_sme import get_cyber_sme_tool
-from app.agents.smes.infra_sme import get_infra_sme_tool
-from app.core.site_properties import get_site_property
+"""
+flowbot.py — Core FlowBot conversational agent.
+
+Responsibilities:
+- Match user messages to intents using normalization, synonym expansion, and partial matching.
+- Generate tone-specific responses with dynamic placeholder substitution.
+- Provide proactive greetings on connect.
+- Route unmatched inputs to tone-aware failback.
+"""
+
+from datetime import datetime
+from random import choice
+from typing import Any, Dict, List, Optional
+
+from app.core.config import GENERAL_INTENTS
+from app.core.logger import logger
+from app.utils.text_utils import normalize_text, expand_with_synonyms
+
+# =============================================================================
+# FlowBot Class
+# =============================================================================
 
 class FlowBot:
-    def __init__(self, state_manager, required_fields, prompts_file="permitFlowDb/tollgate_prompts.json"):
-        self.state = state_manager
-        self.required_fields = required_fields
-        self.llm = None  # Lazy init
-        self.history = []
-        self.current_tollgate = 1
-        self.current_prompt_index = 1
-        self.prompts = self._load_prompts(Path(prompts_file))
-        self.bot_name = get_site_property("FLOWBOT_PREFERRED_NAME", "FlowBot")
+    """Conversational agent for handling user messages with tone-aware responses."""
 
-    # ─────────────────────────────────────────────────────────────
-    # 🔧 Initialization & Prompt Loading
-    # ─────────────────────────────────────────────────────────────
-    def _ensure_llm(self):
-        if self.llm is None:
-            self.llm = get_llm(temperature=0.7)
-        return self.llm
+    def __init__(self, user_id: str, tone: str = "default"):
+        self.user_id = user_id
+        self.tone = tone
+        self.intents = GENERAL_INTENTS
+        logger.info(f"[FlowBot Init] user_id={self.user_id}, tone={self.tone}")
 
-    def _load_prompts(self, prompts_file: Path):
-        if not prompts_file.exists():
-            raise FileNotFoundError(f"Prompts file not found: {prompts_file}")
-        content = prompts_file.read_text(encoding="utf-8").strip()
-        if not content:
-            raise ValueError(f"Prompts file is empty: {prompts_file}")
-        return json.loads(content)
+    # -------------------------------------------------------------------------
+    # Internal Helpers
+    # -------------------------------------------------------------------------
 
-    def _get_prompt(self, tollgate_number, prompt_number):
-        return self.prompts.get(str(tollgate_number), {}).get(str(prompt_number), "")
-
-    def _get_total_prompts(self, tollgate_number):
-        return len(self.prompts.get(str(tollgate_number), {}))
-
-    # ─────────────────────────────────────────────────────────────
-    # 🧠 Field Extraction from User Input
-    # ─────────────────────────────────────────────────────────────
-    def _extract_field_from_text(self, text):
-        patterns = {
-            "service_name": r"(?:called|named|service name (?:is|will be)|project is|project will be)\s+([A-Za-z0-9 _-]+)",
-            "owner": r"(?:I am|I will be|owned by|owner is)\s+([A-Za-z0-9 _-]+)",
-            "data_classification": r"(Confidential|Public|Internal|Sensitive|Not sensitive|Non[- ]?private|Non[- ]?sensitive)"
+    def _placeholder_values(self) -> Dict[str, str]:
+        """Generate dynamic placeholder values for response formatting."""
+        now = datetime.now()
+        return {
+            "user_name": self.user_id,
+            "time": now.strftime("%-I:%M %p"),
+            "date": now.strftime("%B %-d, %Y"),
+            "time_of_day": self._get_time_of_day(now.hour),
         }
-        for field, pattern in patterns.items():
-            match = re.search(pattern, text, re.IGNORECASE)
-            if match:
-                return field, match.group(1).strip()
-        return None, None
 
-    # ─────────────────────────────────────────────────────────────
-    # 💬 Conversation Flow
-    # ─────────────────────────────────────────────────────────────
-    def start(self, permit_type: str):
-        self.state.set("permit_type", permit_type)
-        self.state.set("application", {})
-        self.current_tollgate = 1
-        self.current_prompt_index = 1
-        greeting = self._get_prompt(1, 1)
-        self.history.append(("FlowBot", greeting))
-        return greeting
+    @staticmethod
+    def _get_time_of_day(hour: int) -> str:
+        """Return a human-friendly time of day string."""
+        if 5 <= hour < 12:
+            return "morning"
+        elif 12 <= hour < 17:
+            return "afternoon"
+        elif 17 <= hour < 21:
+            return "evening"
+        return "night"
 
-    def converse(self, user_message: str) -> str:
-        self.history.append(("User", user_message))
-        app_data = self.state.get("application", {})
+    def _handle_failback(self, message: str) -> str:
+        """Return a tone-aware failback response."""
+        logger.info(f"[Failback Triggered] user_id={self.user_id}, message={message}")
+        failback_intent = self.intents.get("fallback", {})
+        responses = failback_intent.get("responses", {})
 
-        # ── Prompt progression ──
-        if self.current_prompt_index < self._get_total_prompts(self.current_tollgate):
-            self.current_prompt_index += 1
-            prompt_text = self._get_prompt(self.current_tollgate, self.current_prompt_index)
-            self.history.append(("FlowBot", prompt_text))
-            return prompt_text
+        if isinstance(responses, dict):
+            tone_responses = responses.get(self.tone) or responses.get("formal")
+            if isinstance(tone_responses, list) and tone_responses:
+                reply = choice(tone_responses).format(**self._placeholder_values())
+                logger.info(f"[Failback Response] user_id={self.user_id}, response={reply}")
+                return reply
+            elif isinstance(tone_responses, str):
+                return tone_responses.format(**self._placeholder_values())
 
-        # ── Field extraction ──
-        field, value = self._extract_field_from_text(user_message)
-        if field and value:
-            app_data[field] = value
-        elif ":" in user_message:
-            field, value = [p.strip() for p in user_message.split(":", 1)]
-            app_data[field] = value
-        self.state.set("application", app_data)
+        default_reply = "I'm here, but I didn't quite catch that. Could you rephrase?"
+        logger.warning(f"[Failback Missing] user_id={self.user_id} — using default: {default_reply}")
+        return default_reply
 
-        # ── Tollgate logic ──
-        missing = [f for f in self.required_fields if f not in app_data or not app_data[f]]
+    def _get_greeting(self) -> str:
+        """Tone-specific greeting for proactive connect messages."""
+        greetings = {
+            "chippy": "Hey there! Ready to crush some tollgates?",
+            "friendly": "Hi! I'm Alexandra. How can I help you today?",
+            "formal": "Greetings. I'm here to assist you with your permit inquiries.",
+            "mentor": "Welcome. Let’s move your project forward together.",
+            "default": "Hello! How can I assist you?"
+        }
+        return greetings.get(self.tone, greetings["default"])
 
-        if self.current_tollgate == 1:
-            if missing:
-                return self._ask_for_missing_field(missing, app_data)
-            self.current_tollgate = 2
-            self.current_prompt_index = 1
-            return self._get_prompt(2, 1)
+    # -------------------------------------------------------------------------
+    # Public API
+    # -------------------------------------------------------------------------
 
-        if self.current_tollgate == 2:
-            sme_results = self.run_sme_reviews(app_data)
-            self.current_tollgate = 3
-            self.current_prompt_index = 1
-            return self._get_prompt(3, 1) + "\n" + self.format_final_output(
-                app_data, sme_results, *self.aggregate_decisions(sme_results)
-            )
+    def handle_message(self, message: str) -> str:
+        """
+        Process an incoming message and return the bot's reply.
 
-        if self.current_tollgate == 3:
-            return "✅ Process complete. Start a new application to begin again."
+        Matching logic:
+        - Normalize and expand synonyms for both input and patterns.
+        - Allow exact or partial matches.
+        - Select tone-specific responses.
+        - Fall back to tone-aware failback if no intent matches.
+        """
+        msg_variants = expand_with_synonyms(message)
+        logger.debug(f"[Match Debug] msg_variants={msg_variants}")
 
-        # ── Fallback: LLM-powered reply ──
-        llm = self._ensure_llm()
-        prompt = flowbot_conversational_prompt()
-        raw_response = (prompt | llm).invoke({
-            "history": self.format_history(),
-            "application": "\n".join(f"{k}: {v}" for k, v in app_data.items()),
-            "next_question": user_message
-        })
-        response = str(raw_response)
-        self.history.append(("FlowBot", response))
-        return response
+        for intent_name, intent_data in self.intents.items():
+            for pattern in intent_data.get("patterns", []):
+                pattern_variants = expand_with_synonyms(pattern)
+                logger.debug(f"[Match Debug] intent={intent_name}, pattern_variants={pattern_variants}")
 
-    def _ask_for_missing_field(self, missing, app_data):
-        current_field = missing[0]
-        next_question = f"Could you tell me the {current_field}?"
-        llm = self._ensure_llm()
-        prompt = flowbot_conversational_prompt()
-        raw_response = (prompt | llm).invoke({
-            "history": self.format_history(),
-            "missing_fields": ", ".join(missing),
-            "application": "\n".join(f"{k}: {v}" for k, v in app_data.items()),
-            "next_question": next_question
-        })
-        response = str(raw_response)
-        self.history.append(("FlowBot", response))
-        return response
+                if any(
+                    mv == pv or mv in pv or pv in mv
+                    for mv in msg_variants
+                    for pv in pattern_variants
+                ):
+                    return self._format_response(intent_data)
 
-    def format_history(self):
-        return "\n".join(f"{speaker}: {msg}" for speaker, msg in self.history)
+        return self._handle_failback(message)
 
-    # ─────────────────────────────────────────────────────────────
-    # 🧪 SME Orchestration
-    # ─────────────────────────────────────────────────────────────
-    def run_sme_reviews(self, application: dict) -> dict:
-        app_str = "\n".join(f"{k}: {v}" for k, v in application.items())
-        results = {}
+    # -------------------------------------------------------------------------
+    # Response Formatting
+    # -------------------------------------------------------------------------
 
-        # Cyber SME
-        try:
-            cyber_tool = get_cyber_sme_tool()
-            if hasattr(cyber_tool, "llm") and hasattr(cyber_tool.llm, "request_timeout"):
-                cyber_tool.llm.request_timeout = 15
-            results["CyberSME"] = cyber_tool.run(app_str)
-        except Exception as e:
-            results["CyberSME"] = {
-                "decision": "error",
-                "justification": f"CyberSME error: {e}",
-                "confidence": 0.0
-            }
+    def _format_response(self, intent_data: Dict[str, Any]) -> str:
+        """Format and return a tone-aware response from intent data."""
+        responses = intent_data.get("responses", {})
 
-        # Infra SME
-        try:
-            infra_tool = get_infra_sme_tool()
-            if hasattr(infra_tool, "llm") and hasattr(infra_tool.llm, "request_timeout"):
-                infra_tool.llm.request_timeout = 15
-            results["InfraSME"] = infra_tool.run(app_str)
-        except Exception as e:
-            results["InfraSME"] = {
-                "decision": "error",
-                "justification": f"InfraSME error: {e}",
-                "confidence": 0.0
-            }
+        if isinstance(responses, dict):
+            tone_responses = responses.get(self.tone) or responses.get("formal")
+            if isinstance(tone_responses, list) and tone_responses:
+                return choice(tone_responses).format(**self._placeholder_values())
+            elif isinstance(tone_responses, str):
+                return tone_responses.format(**self._placeholder_values())
 
-        return results
+        elif isinstance(responses, list):
+            return choice(responses).format(**self._placeholder_values()) if responses else ""
+        elif isinstance(responses, str):
+            return responses.format(**self._placeholder_values())
 
-    # ─────────────────────────────────────────────────────────────
-    # 📊 Decision Aggregation
-    # ─────────────────────────────────────────────────────────────
-    def aggregate_decisions(self, sme_results: dict) -> tuple[str, str]:
-        def score(decision, confidence, weight):
-            return (1 if decision == "approve" else -1) * confidence * weight
-
-        cyber = sme_results.get("CyberSME", {})
-        infra = sme_results.get("InfraSME", {})
-        cyber_score = score(cyber.get("decision", "").lower(), cyber.get("confidence", 0.0), 0.6)
-        infra_score = score(infra.get("decision", "").lower(), infra.get("confidence", 0.0), 0.4)
-        total_score = cyber_score + infra_score
-
-        if cyber.get("decision") == "decline" and cyber.get("confidence", 0.0) >= 0.8:
-            return ("decline", f"CyberSME vetoed:\n- {cyber.get('justification')}\n- InfraSME: {infra.get('justification')}")
-
-        if total_score >= 0:
-            return (
-                "approve",
-                f"Weighted SME consensus approval:\n- CyberSME: {cyber.get('justification')}\n- InfraSME: {infra.get('justification')}"
-            )
-        else:
-            return (
-                "decline",
-                f"Weighted SME consensus decline:\n- CyberSME: {cyber.get('justification')}\n- InfraSME: {infra.get('justification')}"
-            )
+        return ""

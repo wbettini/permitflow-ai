@@ -1,204 +1,119 @@
 """
-flowbot_service.py — Service layer for FlowBot chat.
+flowbot_service.py — Connection orchestration for FlowBot over WS and SSE.
 
 Responsibilities:
-- Manage WebSocket and SSE client connections.
-- Broadcast messages to the correct session's clients (WS + SSE).
-- Maintain short message history per session for new connections.
-- Initialize and run FlowBot conversation loop.
-- Log all connection events, broadcasts, and errors via centralized logger.
+- Manage WebSocket and Server-Sent Events (SSE) client connections.
+- Instantiate FlowBot with correct tone based on avatar mapping.
+- Broadcast messages to all clients in a session (WS + SSE).
+- Send proactive greeting on connect.
+- Provide helper for processing SSE POST messages.
 
 Future Changes:
-- Replace JSON-based prompt loading with Azure DB queries.
-- Add authentication/authorization for multi-user sessions.
-- Implement multi-room support with persistent state.
+- Add per-session context persistence.
+- Support targeted broadcasts to specific clients.
+- Integrate authentication for multi-user environments.
 """
 
+import asyncio
+from typing import Dict, Set
 from fastapi import WebSocket
-from starlette.websockets import WebSocketDisconnect
-from typing import Dict, Set, AsyncGenerator
-from asyncio import Queue
-from collections import defaultdict
+from sse_starlette.sse import EventSourceResponse
 
-from app.core.config import load_site_properties, TOLLGATE_PROMPTS_FILE
-from app.core.state_manager import StateManager
-from app.core.logger import logger
 from app.agents.flowbot.flowbot import FlowBot
+from app.core.logger import logger
 
-# ===== Connection State =====
-ws_clients: Dict[str, Set[WebSocket]] = defaultdict(set)   # session_id -> active WS connections
-sse_clients: Dict[str, Set[Queue]] = defaultdict(set)      # session_id -> SSE queues
-message_history: Dict[str, list[str]] = defaultdict(list)  # session_id -> recent messages
-MESSAGE_HISTORY_LIMIT = 20                                 # Keep last N messages per session
+# ===== Avatar to Tone Mapping =====
+avatar_to_tone_map = {
+    "FlowBot": "chippy",
+    "Alexandra": "mentor",
+    "Robert": "formal",
+    "Emily": "chippy"
+}
 
+# ===== Client Tracking =====
+ws_clients: Dict[str, Set[WebSocket]] = {}
+sse_clients: Dict[str, Set[asyncio.Queue]] = {}
 
-# ===== Broadcast Utilities =====
-async def broadcast_message(session_id: str, message: str) -> None:
-    """
-    Send a message to all connected WS and SSE clients in a given session.
-
-    Args:
-        session_id (str): The session/room identifier.
-        message (str): The message text to broadcast.
-
-    Notes:
-        - Stores message in per-session history for replay to new clients.
-        - Removes clients from lists if send fails.
-    """
+# ===== Broadcast Helper =====
+async def broadcast_message(session_id: str, message: str):
+    """Send a message to all WS and SSE clients in the session."""
     logger.info(f"[BROADCAST][{session_id}] {message!r}")
 
-    # Store in history (bounded)
-    history = message_history[session_id]
-    history.append(message)
-    if len(history) > MESSAGE_HISTORY_LIMIT:
-        history.pop(0)
-
-    # Send to WebSocket clients
-    for ws in list(ws_clients[session_id]):
+    # WS clients
+    for ws in list(ws_clients.get(session_id, [])):
         try:
             await ws.send_text(message)
         except Exception as e:
-            logger.warning(f"[WS][{session_id}] Failed to send to {ws.client}: {e}")
+            logger.warning(f"[WS][{session_id}] Broadcast failed: {e}")
             ws_clients[session_id].discard(ws)
 
-    # Send to SSE clients
-    for queue in list(sse_clients[session_id]):
+    # SSE clients
+    for queue in list(sse_clients.get(session_id, [])):
         try:
             await queue.put(message)
         except Exception as e:
-            logger.warning(f"[SSE][{session_id}] Failed to send to client queue: {e}")
+            logger.warning(f"[SSE][{session_id}] Broadcast failed: {e}")
             sse_clients[session_id].discard(queue)
 
-
-# ===== WebSocket Handler =====
-async def handle_ws_connection(websocket: WebSocket, avatar: str, session_id: str) -> None:
-    """
-    Accepts a WebSocket connection and runs the FlowBot conversation loop.
-
-    Args:
-        websocket (WebSocket): The active WebSocket connection.
-        avatar (str): Avatar name to personalize the bot persona.
-        session_id (str): Unique session/room identifier.
-
-    Flow:
-        1. Accept connection and log open.
-        2. Load site properties and select avatar.
-        3. Initialize FlowBot with required fields and prompt file.
-        4. Send greeting via broadcast to this session only.
-        5. Loop to receive messages and send replies until process completes.
-        6. Handle disconnects and errors gracefully.
-    """
+# ===== WebSocket Connection Handler =====
+async def handle_ws_connection(websocket: WebSocket, avatar: str, session_id: str):
+    """Manage a single WebSocket connection for FlowBot."""
     await websocket.accept()
-    ws_clients[session_id].add(websocket)
+    ws_clients.setdefault(session_id, set()).add(websocket)
 
-    client_host = websocket.client.host if websocket.client else "unknown"
-    logger.info(f"[WS][{session_id}] Client connected: {client_host} (avatar={avatar})")
+    tone = avatar_to_tone_map.get(avatar, "default")
+    bot = FlowBot(user_id=session_id, tone=tone)
 
-    props = load_site_properties()
+    logger.info(f"[WS][{session_id}] Client connected (avatar={avatar}, tone={tone})")
 
-    # Match avatar from query param if provided, else default
-    selected_avatar = next(
-        (a for a in props["ALTERNATE_AVATARS"] if a["avatar"] == avatar),
-        props["ALTERNATE_AVATARS"][0]
-    )
-
-    # Required fields for FlowBot's workflow
-    required_fields = ["service_name", "owner", "data_classification"]
-
-    # Initialize state manager and FlowBot instance
-    state = StateManager()
-    bot = FlowBot(state, required_fields, prompts_file=TOLLGATE_PROMPTS_FILE)
-
-    # Dynamic greeting
-    greeting = (
-        f"👋 Hi, I'm {selected_avatar['avatar']}! "
-        "What type of 'Permit to...' are we working on today?"
-    )
+    # Proactive greeting — tone-aware and placeholder-ready
+    greeting = bot._get_greeting().format(**bot._placeholder_values())
     await broadcast_message(session_id, greeting)
 
     try:
         while True:
-            data = await websocket.receive_text()
-            logger.info(f"[WS][{session_id}] Received from {client_host}: {data!r}")
+            message_text = await websocket.receive_text()
+            logger.info(f"[WS][{session_id}] Received: {message_text}")
+            reply_text = bot.handle_message(message_text)
+            await broadcast_message(session_id, reply_text)
 
-            # First message = permit type
-            if not state.get("permit_type"):
-                if not data.lower().startswith("permit to"):
-                    await websocket.send_text(
-                        "Which type of permit are we working on? "
-                        "For example: Permit to Design, Permit to Build, Permit to Operate."
-                    )
-                    continue
-                start_msg = bot.start(data)
-                await broadcast_message(session_id, start_msg)
-                continue
-
-            # Subsequent messages
-            reply = bot.converse(data)
-            await broadcast_message(session_id, reply)
-
-            # Optional: detect end of process
-            if bot.current_tollgate == 3 and "Process complete" in reply:
-                logger.info(f"[WS][{session_id}] Process complete for {client_host}")
-                break
-
-    except WebSocketDisconnect:
-        logger.info(f"[WS][{session_id}] Client disconnected: {client_host}")
     except Exception as e:
-        logger.error(f"[WS][{session_id}] Error for {client_host}: {e}", exc_info=True)
-        try:
-            if websocket.application_state.name != "DISCONNECTED":
-                await websocket.send_text(f"⚠️ Error: {e}")
-        except RuntimeError:
-            pass  # Socket already closed
+        logger.exception(f"[WS][{session_id}] Connection error: {e}")
     finally:
         ws_clients[session_id].discard(websocket)
-        if not ws_clients[session_id]:
-            ws_clients.pop(session_id, None)
-            message_history.pop(session_id, None)
-        logger.info(f"[WS][{session_id}] Connection cleanup complete for {client_host}")
+        try:
+            await websocket.close()
+        except Exception:
+            pass
+        logger.info(f"[WS][{session_id}] Connection closed (avatar={avatar})")
 
-
-# ===== SSE Handler =====
-async def sse_event_stream(session_id: str) -> AsyncGenerator[str, None]:
-    """
-    Async generator for SSE clients.
-
-    Flow:
-        1. Add client queue to sse_clients[session_id].
-        2. Send per-session message history immediately.
-        3. Yield new messages as they arrive.
-        4. Remove client on disconnect.
-    """
-    queue: Queue = Queue()
-    sse_clients[session_id].add(queue)
+# ===== SSE Event Stream =====
+async def sse_event_stream(session_id: str):
+    """Async generator for SSE connections."""
+    queue: asyncio.Queue[str] = asyncio.Queue()
+    sse_clients.setdefault(session_id, set()).add(queue)
     logger.info(f"[SSE][{session_id}] Client connected (total SSE clients: {len(sse_clients[session_id])})")
 
-    # Send history to new client
-    for msg in message_history[session_id]:
-        yield f"data: {msg}\n\n"
+    async def event_generator():
+        try:
+            while True:
+                message = await queue.get()
+                yield {"event": "message", "data": message}
+        except asyncio.CancelledError:
+            pass
+        finally:
+            sse_clients[session_id].discard(queue)
+            logger.info(f"[SSE][{session_id}] Client disconnected")
 
-    try:
-        while True:
-            msg = await queue.get()
-            yield f"data: {msg}\n\n"
-    except Exception as e:
-        logger.warning(f"[SSE][{session_id}] Stream error: {e}")
-    finally:
-        sse_clients[session_id].discard(queue)
-        if not sse_clients[session_id]:
-            sse_clients.pop(session_id, None)
-        logger.info(f"[SSE][{session_id}] Client disconnected (total SSE clients: {len(sse_clients.get(session_id, []))})")
+    return EventSourceResponse(event_generator())
 
+# ===== SSE Send Helper =====
+async def handle_sse_send(session_id: str, text: str, avatar: str):
+    """Process a message received via HTTP POST and broadcast it."""
+    tone = avatar_to_tone_map.get(avatar, "default")
+    bot = FlowBot(user_id=session_id, tone=tone)
 
-# ===== SSE Send Handler =====
-async def handle_sse_send(session_id: str, text: str) -> None:
-    """
-    Handle incoming message from SSE client via HTTP POST.
+    logger.info(f"[SSE][{session_id}] Processing POST message from avatar={avatar}, tone={tone}: {text!r}")
 
-    Args:
-        session_id (str): The session/room identifier.
-        text (str): The message text to broadcast.
-    """
-    logger.info(f"[SEND][{session_id}] Received SSE POST message: {text!r}")
-    await broadcast_message(session_id, text)
+    reply_text = bot.handle_message(text)
+    await broadcast_message(session_id=session_id, message=reply_text)

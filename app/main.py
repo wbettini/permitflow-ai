@@ -7,13 +7,12 @@ Responsibilities:
 - Serve static assets and health/version endpoints.
 """
 
-from app.routers import tollgate_prompts
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 import os
 
-from .routers import flowbot_ws, site_properties
+from app.routers import flowbot_ws, site_properties
 
 # -------------------------
 # FastAPI App Initialization
@@ -26,7 +25,6 @@ print("🚀 FlowBot is live and listening...")
 # -------------------------
 app.include_router(flowbot_ws.router)
 app.include_router(site_properties.router)
-app.include_router(tollgate_prompts.router)
 
 # -------------------------
 # Serve Chat UI + Static Assets
