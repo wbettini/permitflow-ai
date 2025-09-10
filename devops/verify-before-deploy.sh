@@ -24,6 +24,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 REQ_FILE="$REPO_ROOT/requirements.txt"
 REQ_DEV_FILE="$REPO_ROOT/requirements-dev.txt"
+TEXT_UTILS="$REPO_ROOT/app/utils/text_utils.py"
 
 # ANSI colors
 GREEN="\033[0;32m"
@@ -32,7 +33,10 @@ YELLOW="\033[1;33m"
 NC="\033[0m"
 
 # ====== PRE-FLIGHT CHECKS ======
-command -v python3 >/dev/null 2>&1 || { echo -e "${RED}❌ Python 3 not found.${NC}"; exit 1; }
+command -v python3 >/dev/null 2>&1 || {
+    echo -e "${RED}❌ Python 3 not found.${NC}"
+    exit 1
+}
 
 # Confirm importlib.util is actually importable (no false positives)
 python3 - <<'EOF'
@@ -49,10 +53,24 @@ if ! python3 -c "import uvicorn" >/dev/null 2>&1; then
     pip install uvicorn
 fi
 
+# Confirm requirements.txt exists
 if [[ ! -f "$REQ_FILE" ]]; then
     echo -e "${RED}❌ requirements.txt not found in repo root: $REQ_FILE${NC}"
     exit 1
 fi
+
+# Confirm text_utils.py exists
+if [[ ! -f "$TEXT_UTILS" ]]; then
+    echo -e "${RED}❌ Missing expected module: app/utils/text_utils.py${NC}"
+    exit 1
+fi
+
+# Confirm app.main:app is importable
+echo -e "${YELLOW}🔍 Verifying app.main:app import path...${NC}"
+python3 -c "from app.main import app" || {
+    echo -e "${RED}❌ Could not import 'app.main:app'. Check your module structure.${NC}"
+    exit 1
+}
 
 # ====== CREATE TEMP VENV ======
 TMP_VENV=$(mktemp -d /tmp/permitflow_venv_XXXX)
@@ -68,7 +86,7 @@ pip install -r "$REQ_FILE"
 
 # ====== RUN UVICORN IMPORT CHECK ======
 echo -e "${YELLOW}🚀 Starting uvicorn to verify imports...${NC}"
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload &
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level warning &
 
 UVICORN_PID=$!
 sleep 3  # Give it a moment to start

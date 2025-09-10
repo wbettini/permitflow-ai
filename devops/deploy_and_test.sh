@@ -10,6 +10,7 @@
 # Usage:
 #   ./devops/deploy_and_test.sh              # Deploy + test
 #   ./devops/deploy_and_test.sh --test-only  # Test only, no deploy
+#   ./devops/deploy_and_test.sh --skip-tests # Deploy only, no tests
 #
 # Prerequisites:
 # - Azure CLI logged in (`az login`)
@@ -27,6 +28,7 @@ SKU="F1"
 BASE_URL="https://${APP_NAME}.azurewebsites.net"
 WS_PATH="/ws/flowbot"
 TOLLGATE_PROMPTS_FILE="app/permitFlowDb/tollgate_prompts.json"
+TEXT_UTILS="app/utils/text_utils.py"
 
 # ANSI colors
 GREEN="\033[0;32m"
@@ -35,8 +37,8 @@ YELLOW="\033[1;33m"
 NC="\033[0m"
 
 # ====== PRE-FLIGHT CHECKS ======
-command -v az >/dev/null 2>&1 || { echo -e "${RED}Azure CLI not found. Install Azure CLI first.${NC}"; exit 1; }
-command -v python3 >/dev/null 2>&1 || { echo -e "${RED}Python 3 not found.${NC}"; exit 1; }
+command -v az >/dev/null 2>&1 || { echo -e "${RED}❌ Azure CLI not found. Install Azure CLI first.${NC}"; exit 1; }
+command -v python3 >/dev/null 2>&1 || { echo -e "${RED}❌ Python 3 not found.${NC}"; exit 1; }
 
 # Confirm importlib.util is importable
 python3 - <<'EOF'
@@ -65,12 +67,23 @@ if [[ ! -s "$TOLLGATE_PROMPTS_FILE" ]]; then
     exit 1
 fi
 
+# Confirm text_utils.py exists
+if [[ ! -f "$TEXT_UTILS" ]]; then
+    echo -e "${RED}❌ Missing expected module: $TEXT_UTILS${NC}"
+    exit 1
+fi
+
+# Confirm app.main:app is importable
+echo -e "${YELLOW}🔍 Verifying app.main:app import path...${NC}"
+python3 -c "from app.main import app" || {
+    echo -e "${RED}❌ Could not import 'app.main:app'. Check your module structure.${NC}"
+    exit 1
+}
+
 # ====== FUNCTIONS ======
 run_smoke_tests() {
 python3 - <<EOF
-"""
-Smoke tests for PermitFlow-AI deployment.
-"""
+"""Smoke tests for PermitFlow-AI deployment."""
 import requests, websocket, ssl, time, uuid
 
 BASE_URL = "$BASE_URL"
@@ -152,6 +165,21 @@ EOF
 if [[ "${1:-}" == "--test-only" ]]; then
     echo -e "${YELLOW}🔍 Running smoke tests only (no deploy)...${NC}"
     run_smoke_tests
+elif [[ "${1:-}" == "--skip-tests" ]]; then
+    echo -e "${YELLOW}🚀 Deploying without running smoke tests...${NC}"
+    az webapp config set \
+      --name "$APP_NAME" \
+      --resource-group "$RESOURCE_GROUP" \
+      --startup-file "gunicorn -k uvicorn.workers.UvicornWorker app.main:app --bind=0.0.0.0:\$PORT --timeout 600"
+
+    az webapp up \
+      --name "$APP_NAME" \
+      --resource-group "$RESOURCE_GROUP" \
+      --runtime "PYTHON:3.12" \
+      --sku "$SKU" \
+      --location "$LOCATION"
+
+    echo -e "${GREEN}✅ Deploy complete.${NC}"
 else
     echo -e "${YELLOW}⚙️  Setting Azure startup command to app.main:app...${NC}"
     az webapp config set \
