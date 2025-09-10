@@ -27,7 +27,7 @@ LOCATION="eastus2"
 SKU="F1"
 BASE_URL="https://${APP_NAME}.azurewebsites.net"
 WS_PATH="/ws/flowbot"
-TOLLGATE_PROMPTS_FILE="app/permitFlowDb/tollgate_prompts.json"
+TOLLGATE_PROMPTS_FILE="app/permitFlowDb/general_intents.json"
 TEXT_UTILS="app/utils/text_utils.py"
 
 # ANSI colors
