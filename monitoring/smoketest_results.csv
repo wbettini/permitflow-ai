@@ -109,3 +109,7 @@ timestamp,endpoint,status,response_time_ms
 2025-09-09T02:36:05.555832,/docs,OK,123.7
 2025-09-09T02:36:05.555832,WS Handshake,OK,522.1
 2025-09-09T02:36:05.555832,WS Message,OK,63.4
+2025-09-11T14:30:23.549937,/,OK,242.6
+2025-09-11T14:30:23.549937,/health,OK,214.5
+2025-09-11T14:30:23.549937,/docs,OK,210.4
+2025-09-11T14:30:23.549937,WebSocket,"ERROR(Handshake status 403 Forbidden -+-+- {'content-length': '0', 'content-type': 'text/plain', 'date': 'Thu, 11 Sep 2025 14:30:24 GMT', 'set-cookie': 'ARRAffinity=43631460bf86d7f40d5b93bbd6d2c1c23daa6bc69ba1ff6fc850102219312bc3;Path=/;HttpOnly;Secure;Domain=permitflow-ai-demo.azurewebsites.net; ARRAffinitySameSite=43631460bf86d7f40d5b93bbd6d2c1c23daa6bc69ba1ff6fc850102219312bc3;Path=/;HttpOnly;SameSite=None;Secure;Domain=permitflow-ai-demo.azurewebsites.net'} -+-+- b'')",0.0
