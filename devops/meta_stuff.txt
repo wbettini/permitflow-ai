@@ -41,5 +41,5 @@ curl -s -X POST http://localhost:8000/permit/run \
 
   python smoke_test.py
 
-  ./deploy_and_test.sh
-  ./deploy_and_test.sh --test-only
+  ./devops/deploy_and_test.sh
+  ./devops/deploy_and_test.sh --test-only
