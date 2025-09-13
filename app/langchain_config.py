@@ -1,28 +1,36 @@
 # langchain_config.py
+
+"""
+⚙️ LangChain Configuration for PermitFlow
+
+Centralized config for LLM initialization, memory, and prompt templates.
+Supports both OpenAI and Azure OpenAI providers via .env settings.
+"""
+
 import os
 from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 
-# Load environment variables from .env
+# 🌱 Load environment variables from .env
 load_dotenv()
 
+# 🔁 Import LLM providers (fallback for older LangChain versions)
 try:
     from langchain_openai import AzureChatOpenAI, ChatOpenAI
 except ImportError:
-    from langchain.chat_models import ChatOpenAI  # fallback for older LC versions
+    from langchain.chat_models import ChatOpenAI
     AzureChatOpenAI = None
 
-# -------------------------
-# Default timeout for all LLM calls (seconds)
-# -------------------------
+# 🕒 Default timeout for all LLM calls (seconds)
 DEFAULT_LLM_TIMEOUT = 15
 
-# -------------------------
-# Lazy-loaded LLM instance
-# -------------------------
-_llm_instance = None  # private cache
+# 🧠 Lazy-loaded LLM instance (cached after first init)
+_llm_instance = None
 
+# ------------------------------------------------------------------------------
+# 🔧 LLM Initialization
+# ------------------------------------------------------------------------------
 def get_llm(temperature: float = 0.2, model: str | None = None, streaming: bool = False):
     """
     Returns a LangChain-compatible LLM based on LLM_PROVIDER in .env.
@@ -41,7 +49,8 @@ def get_llm(temperature: float = 0.2, model: str | None = None, streaming: bool 
             model=model_name,
             temperature=temperature,
             streaming=streaming,
-            request_timeout=DEFAULT_LLM_TIMEOUT
+            request_timeout=DEFAULT_LLM_TIMEOUT,
+            openai_api_key=os.getenv("OPENAI_API_KEY")  # ✅ Explicit key injection
         )
         return _llm_instance
 
@@ -62,9 +71,9 @@ def get_llm(temperature: float = 0.2, model: str | None = None, streaming: bool 
 
     raise ValueError(f"Unsupported LLM_PROVIDER: {provider}")
 
-# -------------------------
-# Memory
-# -------------------------
+# ------------------------------------------------------------------------------
+# 🧠 Memory
+# ------------------------------------------------------------------------------
 def get_memory(session_id: str | None = None):
     """
     Returns a simple in-memory conversation buffer.
@@ -76,8 +85,14 @@ def get_memory(session_id: str | None = None):
         return_messages=True
     )
 
-# ---------- Prompt Templates ----------
+# ------------------------------------------------------------------------------
+# 🧾 Prompt Templates
+# ------------------------------------------------------------------------------
 def flowbot_system_prompt() -> str:
+    """
+    Returns FlowBot's core system role description.
+    Used in persona merging and fallback orchestration.
+    """
     return (
         "You are FlowBot, the orchestrator agent inside the PermitFlow application. "
         "You guide applicants through the tollgate approval process, gather missing information, "
@@ -86,6 +101,9 @@ def flowbot_system_prompt() -> str:
     )
 
 def cyber_sme_prompt_template() -> PromptTemplate:
+    """
+    Returns a strict JSON-only prompt for Cyber SME decision logic.
+    """
     template = """
 You are a Cybersecurity SME evaluating a permit application.
 
@@ -101,11 +119,10 @@ JSON only. No extra text.
 """
     return PromptTemplate(input_variables=["application"], template=template.strip())
 
-PROMPTS = {
-    "cyber_sme": cyber_sme_prompt_template(),
-}
-
-def flowbot_conversational_prompt():
+def flowbot_conversational_prompt() -> PromptTemplate:
+    """
+    Returns FlowBot's conversational prompt for guiding applicants through tollgates.
+    """
     return PromptTemplate(
         input_variables=["history", "missing_fields", "application", "next_question"],
         template="""
@@ -128,5 +145,10 @@ Your task:
 
 Next question to ask:
 {next_question}
-"""
+""".strip()
     )
+
+# 🔖 Prompt registry (expandable)
+PROMPTS = {
+    "cyber_sme": cyber_sme_prompt_template(),
+}

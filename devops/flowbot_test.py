@@ -1,5 +1,6 @@
 """
-flowbot_test.py — Quick manual test for FlowBot failback logic.
+🧪 flowbot_test.py — Manual test for FlowBot persona responses.
+
 Run from project root or with PYTHONPATH set so /app is importable.
 """
 
@@ -13,15 +14,10 @@ sys.path.append(str(ROOT_DIR))
 from app.agents.flowbot.flowbot import FlowBot
 
 if __name__ == "__main__":
-    
-    bot = FlowBot(user_id="test_user", tone="friendly")
-    response = bot.handle_message("This is something random")
-    print("FlowBot says:", response)
-    
-    bot = FlowBot(user_id="test_user", tone="formal")
-    response = bot.handle_message("This is something random")
-    print("FlowBot says:", response)
+    test_message = "This is something random"
 
-    bot = FlowBot(user_id="test_user", tone="mentor")
-    response = bot.handle_message("This is something random")
-    print("FlowBot says:", response)
+    for avatar in ["Alexandra", "Robert", "Emily", "FlowBot", "default"]:
+        bot = FlowBot(user_id="test_user", avatar=avatar)
+        response = bot.handle_message(test_message)
+        print(f"\n🧑‍🎤 Avatar: {avatar}")
+        print("💬 FlowBot says:", response)

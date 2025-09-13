@@ -1,0 +1,40 @@
+# ===== PermitFlow Shared Dependencies =====
+# Used by both production and development environments
+
+# --- Core Framework ---
+fastapi==0.116.1
+starlette==0.47.3
+uvicorn[standard]==0.35.0
+sse-starlette
+
+# --- WebSocket / SSE Support ---
+websockets==15.0.1
+httptools==0.6.4
+uvloop==0.21.0
+watchfiles==1.1.0
+
+# --- Data & Config ---
+pydantic==2.11.7
+pydantic_core==2.33.2
+python-dotenv==1.1.1
+PyYAML==6.0.2
+orjson==3.11.3
+
+# --- LangChain / AI Integration ---
+langchain==0.3.27
+langchain-core==0.3.75
+langchain-openai==0.3.32
+langchain-text-splitters==0.3.11
+langsmith==0.4.25
+openai==1.106.1
+tiktoken==0.11.0
+
+# --- Database / ORM ---
+SQLAlchemy==2.0.43
+
+# --- Logging ---
+python-json-logger==3.3.0
+
+# --- HTTP Clients ---
+httpx==0.28.1
+requests==2.32.4

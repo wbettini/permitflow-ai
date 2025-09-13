@@ -1,0 +1,5 @@
+{
+  "greet": "static_response",
+  "check_permit_status": "workflow_permit_status",
+  "submit_application": "workflow_submit_application"
+}

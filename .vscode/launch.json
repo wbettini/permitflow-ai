@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Uvicorn FastAPI (Attach)",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/workspaces/permitflow-ai"
+                }
+            ]
+        },
+        {
+            "name": "Python: Uvicorn FastAPI (Launch)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app.main:app",
+                "--reload",
+                "--host", "0.0.0.0",
+                "--port", "8000",
+                "--reload-dir", "app",
+                "--log-level", "debug"
+            ],
+            "jinja": true,
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+            //, "preLaunchTask": "clear-terminal"
+        }
+    ]
+}

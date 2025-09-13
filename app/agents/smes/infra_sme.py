@@ -1,7 +1,7 @@
 # agents/smes/infra_sme.py
 from langchain.tools import Tool
 from langchain_core.output_parsers import JsonOutputParser
-from langchain_config import get_llm, PROMPTS
+from app.langchain_config import get_llm, PROMPTS
 from langchain.prompts import PromptTemplate
 
 # Define the InfraSME prompt template

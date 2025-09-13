@@ -1,67 +1,62 @@
-"""
-config.py — Core configuration and defaults for PermitFlow-AI.
-
-Responsibilities:
-- Define application-wide constants and default settings.
-- Centralize file paths for local JSON-based storage (to be replaced by Azure DB).
-- Provide helper functions for loading configuration data.
-
-Future Changes:
-- When migrating to Azure DB, replace file path constants with DB connection settings.
-- Keep DEFAULTS here so they remain the single source of truth.
-"""
-
 from pathlib import Path
 import json
+from app.prompts.flowbot_prompts import AVATAR_MAP, PERSONAS
 
 # ===== Base Paths =====
-# BASE_DIR points to the /app directory so all paths are package-relative.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Directory containing local JSON "database" files.
-# This can be moved or replaced without touching service code.
 DB_DIR = BASE_DIR / "permitFlowDb"
 
 GENERAL_INTENTS_PATH = DB_DIR / "general_intents.json"
+SITE_PROPERTIES_FILE = DB_DIR / "site_properties.json"
 
+# ===== Loaders =====
 def load_general_intents():
     with open(GENERAL_INTENTS_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
 GENERAL_INTENTS = load_general_intents()
 
-
-# Specific file paths for current JSON storage
-SITE_PROPERTIES_FILE = DB_DIR / "site_properties.json"
-#TOLLGATE_PROMPTS_FILE = DB_DIR / "tollgate_prompts.json"
-
-# Path-safe reference to tollgates.yaml in the same folder as this file
-# TOLLGATE_PROMPTS_FILE = Path(__file__).parent / "tollgates.yaml"
+# ===== Avatar Helpers =====
+def get_alternate_avatars(exclude: str | None = None) -> list[dict]:
+    """
+    Build a list of alternate avatars from avatars.json and personas.json.
+    """
+    alternates = []
+    for avatar_name, data in AVATAR_MAP.items():
+        if exclude and avatar_name == exclude:
+            continue
+        persona_key = data.get("persona", "default")
+        demeanor = PERSONAS.get(persona_key, {}).get("demeanor", "")
+        alternates.append({
+            "avatar": avatar_name,
+            "persona": persona_key,
+            "demeanor": demeanor.title(),
+            "icon": data.get("icon"),
+            "default": data.get("default", False)
+        })
+    return alternates
 
 # ===== Default Site Properties =====
 DEFAULTS = {
     "FLOWBOT_PREFERRED_NAME": "FlowBot",
     "SUPPORT_EMAIL": "support.permitflow@bettini.us",
     "DEFAULT_LANGUAGE": "en-US",
-    "ALTERNATE_AVATARS": [
-        {
-            "avatar": "FlowBot",
-            "demeanor": "Chippy",
-            "icon": "/static/flowbot-avatar.png"
-        }
-    ]
+    "ALTERNATE_AVATARS": get_alternate_avatars()
 }
 
-# ===== Helper Functions =====
+# ===== Site Properties Loader =====
 def load_site_properties():
     """
     Load site_properties.json from DB_DIR and merge with DEFAULTS.
-
-    Returns:
-        dict: Combined site properties with defaults applied.
+    Always regenerates ALTERNATE_AVATARS from avatars.json.
     """
+    props = DEFAULTS.copy()
+
     if SITE_PROPERTIES_FILE.exists():
         with open(SITE_PROPERTIES_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return {**DEFAULTS, **data}
-    return DEFAULTS
+            file_data = json.load(f)
+        props.update(file_data)
+
+    # Always overwrite with live avatar list
+    props["ALTERNATE_AVATARS"] = get_alternate_avatars()
+    return props

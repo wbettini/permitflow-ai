@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 import os
 
-from app.routers import flowbot_ws, site_properties
+from app.routers import flowbot_ws, site_properties, persona_preview
 
 # -------------------------
 # FastAPI App Initialization
@@ -25,6 +25,7 @@ print("🚀 FlowBot is live and listening...")
 # -------------------------
 app.include_router(flowbot_ws.router)
 app.include_router(site_properties.router)
+app.include_router(persona_preview.router)
 
 # -------------------------
 # Serve Chat UI + Static Assets

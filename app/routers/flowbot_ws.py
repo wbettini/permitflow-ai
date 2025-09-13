@@ -2,14 +2,14 @@
 flowbot_ws.py — Router for FlowBot real-time endpoints.
 
 Responsibilities:
-- Expose WebSocket endpoint for interactive FlowBot chat.
-- Expose SSE endpoint for clients without WebSocket support.
-- Expose HTTP POST endpoint for sending messages into the SSE stream.
-- Log connection opens/closes and messages for debugging and monitoring.
+- WebSocket endpoint for interactive FlowBot chat
+- SSE endpoint for clients without WebSocket support
+- HTTP POST endpoint for injecting messages into the SSE stream
+- Logging for connection lifecycle and message flow
 
-Future Changes:
-- Add authentication/authorization for multi-user sessions.
-- Support query parameters for session IDs or room targeting.
+Future Enhancements:
+- Authentication/authorization for multi-user sessions
+- Room targeting and persona preview via query params
 """
 
 from fastapi import APIRouter, WebSocket, Query, Request
@@ -20,27 +20,26 @@ from app.services import flowbot_service
 
 router = APIRouter(tags=["FlowBot Chat"])
 
+# ===== Utility =====
+def get_client_host(source) -> str:
+    return source.client.host if source.client else "unknown"
+
 # ===== WebSocket Endpoint =====
 @router.websocket("/ws/flowbot")
 async def websocket_flowbot(
     websocket: WebSocket,
-    avatar: str = Query(None, description="Avatar name to personalize the bot persona"),
+    avatar: str = Query("FlowBot", description="Avatar name to personalize the bot persona"),
     session: str = Query(..., description="Unique session/room identifier")
 ):
     """
     Handle a WebSocket connection for FlowBot chat.
 
     Args:
-        websocket (WebSocket): Active WebSocket connection.
-        avatar (str, optional): Avatar name to personalize the bot persona.
-        session (str): Unique session/room identifier for isolating conversations.
-
-    Flow:
-        1. Log connection open.
-        2. Delegate handling to flowbot_service.handle_ws_connection().
-        3. Log connection close in finally block.
+        websocket: Active WebSocket connection
+        avatar: Avatar name to personalize the bot persona
+        session: Unique session/room identifier
     """
-    client_host = websocket.client.host if websocket.client else "unknown"
+    client_host = get_client_host(websocket)
     logger.info(f"[WS][{session}] Connection opened from {client_host} (avatar={avatar})")
 
     try:
@@ -48,17 +47,22 @@ async def websocket_flowbot(
     finally:
         logger.info(f"[WS][{session}] Connection closed from {client_host} (avatar={avatar})")
 
-
 # ===== SSE Endpoint =====
 @router.get("/events")
 async def sse_events(
     request: Request,
     session: str = Query(..., description="Unique session/room identifier")
 ):
-    client_host = request.client.host if request.client else "unknown"
+    """
+    Establish an SSE stream for clients without WebSocket support.
+
+    Args:
+        request: Incoming HTTP request
+        session: Unique session/room identifier
+    """
+    client_host = get_client_host(request)
     logger.info(f"[SSE][{session}] Connection opened from {client_host}")
 
-    # Just return the EventSourceResponse directly
     return await flowbot_service.sse_event_stream(session_id=session)
 
 # ===== SSE Send Endpoint =====
@@ -73,16 +77,16 @@ async def send_message(
     Accept a message via HTTP POST and broadcast it to all SSE clients in the same session.
 
     Args:
-        payload (dict): JSON body containing 'text' key.
-        request (Request): Incoming HTTP request.
-        session (str): Unique session/room identifier for isolating broadcasts.
-        avatar (str): Avatar name to personalize the bot persona.
+        payload: JSON body containing 'text' key
+        request: Incoming HTTP request
+        session: Unique session/room identifier
+        avatar: Avatar name to personalize the bot persona
 
     Returns:
-        dict: Status confirmation.
+        dict: Status confirmation
     """
-    client_host = request.client.host if request.client else "unknown"
-    text = payload.get("text", "")
+    client_host = get_client_host(request)
+    text = payload.get("text", "").strip()
 
     logger.info(f"[SEND][{session}] Message from {client_host} (avatar={avatar}): {text!r}")
 

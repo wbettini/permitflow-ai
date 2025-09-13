@@ -1,0 +1,10 @@
+{
+  "workflow_permit_status": {
+    "description": "Checks the status of a permit application",
+    "steps": ["fetch_status_from_db", "format_status_response"]
+  },
+  "workflow_submit_application": {
+    "description": "Submits a new permit application",
+    "steps": ["validate_input", "store_in_db", "notify_review_team"]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "Alexandra": { "persona": "mentor", "icon": "/static/alexandra-avatar.png" },
+  "Robert": { "persona": "sleepy", "icon": "/static/robert-avatar.png" },
+  "Emily": { "persona": "happy", "icon": "/static/emily-avatar.png" },
+  "Bill": { "persona": "grumpy", "icon": "/static/bill-avatar.png" },
+  "FlowBot": { "persona": "default", "icon": "/static/flowbot-avatar.png", "default": true }
+}
