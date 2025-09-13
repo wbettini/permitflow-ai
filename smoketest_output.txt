@@ -3,17 +3,17 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (2530.4 ms)
-[0;32m[OK][0m    /health             → 200  (660.5 ms)
+[0;32m[OK][0m    /                   → 200  (903.6 ms)
+[0;32m[OK][0m    /health             → 200  (290.0 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (258.3 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=7b51c80a-774a-430b-ac6b-2013fd4c2cd5
-[0;32m[OK][0m    Handshake           → 1467.9 ms
+[0;32m[OK][0m    /docs               → 200  (284.9 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=9f068aed-78dd-4bdc-81bb-310c68c5e038
+[0;32m[OK][0m    Handshake           → 490.9 ms
 [0;32m[OK][0m    TG1 start           → Hey there! Ready to crush some tollgates?
 [0;32m[OK][0m    Purpose reply       → 📍 Tollgate 1: Permit to Design
 Let’s nail down your project’s purpose, features, compliance needs, infrastructure and workforce costs, plus any gap analysis — then you’re cleared for design! 🚀
-[0;32m[OK][0m    Service name reply  → I’m here and listening, 7b51c80a-774a-430b-ac6b-2013fd4c2cd5 — could you say that another way? 😉
+[0;32m[OK][0m    Service name reply  → Not sure I follow, but I’m curious — what’s on your mind?
 [0;32m[OK][0m    Owner reply         → Not sure I follow, but I’m curious — what’s on your mind?
-[0;32m[OK][0m    Data class reply    → I’m here and listening, 7b51c80a-774a-430b-ac6b-2013fd4c2cd5 — could you say that another way? 😉
+[0;32m[OK][0m    Data class reply    → Not sure I follow, but I’m curious — what’s on your mind?
 [0;32m[OK][0m    TG2 SME review      → Hmm, I didn’t quite catch that this night. Want to try rephrasing? 🦈
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
