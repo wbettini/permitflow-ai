@@ -1,3 +1,4 @@
+// /public/js/connection.js
 export const ConnectionManager = {
   ws: null,
   eventSource: null,
@@ -12,10 +13,15 @@ export const ConnectionManager = {
   },
 
   disconnect() {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      console.log("[WS] Disconnecting existing connection...");
+    if (this.ws) {
+      console.log("[WS] Closing WebSocket connection...");
       this.ws.close();
       this.ws = null;
+    }
+    if (this.eventSource) {
+      console.log("[SSE] Closing SSE connection...");
+      this.eventSource.close();
+      this.eventSource = null;
     }
   },
 
@@ -35,7 +41,6 @@ export const ConnectionManager = {
   },
 
   connect(sessionId, avatarName) {
-    // 🔍 Debug trace to find all connection triggers
     console.trace(`[WS] connect() called with avatar=${avatarName}`);
 
     if (this.isConnected()) {
@@ -43,11 +48,19 @@ export const ConnectionManager = {
       return;
     }
 
+    // Always close SSE before starting WS
+    if (this.eventSource) {
+      console.log("[WS] Closing SSE before opening WebSocket...");
+      this.eventSource.close();
+      this.eventSource = null;
+    }
+
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
     const host = window.location.host;
     const avatarParam = encodeURIComponent(avatarName || "FlowBot");
     const wsUrl = `${protocol}://${host}/ws/flowbot?avatar=${avatarParam}&session=${sessionId}`;
 
+    console.log(`[WS] Connecting to ${wsUrl}`);
     this.ws = new WebSocket(wsUrl);
 
     this.ws.onopen = () => {
@@ -61,20 +74,30 @@ export const ConnectionManager = {
       this.handleIncomingMessage(event.data);
     };
 
-    this.ws.onerror = () => {
-      console.warn("[WS] Error — falling back to SSE");
-      this.connectSSE(sessionId);
+    this.ws.onerror = (err) => {
+      console.warn("[WS] Error — falling back to SSE", err);
+      this._startSSE(sessionId);
     };
 
     this.ws.onclose = () => {
       console.log("[WS] Connection closed.");
       if (!this.usingSSE) {
-        this.connectSSE(sessionId);
+        this._startSSE(sessionId);
       }
     };
   },
 
-  connectSSE(sessionId) {
+  _startSSE(sessionId) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      console.log("[SSE] Skipping SSE — WS is active");
+      return;
+    }
+    if (this.eventSource) {
+      console.log("[SSE] Already connected — skipping duplicate SSE");
+      return;
+    }
+
+    console.log("[SSE] Starting SSE connection...");
     this.usingSSE = true;
     this.eventSource = new EventSource(`/events?session=${sessionId}`);
 
@@ -92,6 +115,7 @@ export const ConnectionManager = {
       this._updateStatus("Disconnected", "red");
       console.warn("[SSE] Error — connection closed");
       this.eventSource.close();
+      this.eventSource = null;
     };
   },
 
