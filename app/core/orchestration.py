@@ -2,12 +2,14 @@ from core.state_manager import StateManager
 from app.agents.flowbot.flowbot import FlowBot
 from app.agents.smes.cyber_sme import get_cyber_sme_tool
 from core.human_review import HumanReviewer
-from core.config_loader import load_tollgate_config
+from app.core.config_loader import load_json, DB_DIR  # new unified loader
+
+PERMITS_FILE = DB_DIR / "permits.json"  # or wherever your permit definitions live
 
 class Orchestrator:
     def __init__(self):
         self.state = StateManager()
-        self.config = load_tollgate_config()
+        self.config = load_json(PERMITS_FILE)  # replaces load_tollgate_config()
         self.flowbot = None
         self.smes = []
         self.human_reviewer = HumanReviewer()
@@ -16,7 +18,8 @@ class Orchestrator:
         cfg = self.config.get(permit_type)
         if not cfg:
             return {"error": f"Unknown permit type: {permit_type}"}
-        self.flowbot = FlowBot(self.state, cfg["required_fields"])
+
+        self.flowbot = FlowBot(self.state, cfg.get("required_fields", []))
         self.smes = [get_cyber_sme_tool()]  # Later: map SME names to classes dynamically
         return {"message": self.flowbot.start(permit_type)}
 

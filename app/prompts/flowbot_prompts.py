@@ -1,36 +1,43 @@
 """
-🧠 FlowBot Prompt Builder
+app/prompts/flowbot_prompts.py
 
-Constructs system prompts by merging FlowBot's core role with avatar-specific personality traits.
-Used for persona-driven LLM initialization, fallback orchestration, and preview harnesses.
+Responsible for:
+- Loading system prompt templates from JSON.
+- Building persona-aware system prompts for FlowBot.
 """
 
-import json
 from pathlib import Path
+import json
+from typing import Dict
+
+from app.core.persona_config_loader import PERSONAS, AVATAR_MAP
+from app.session.persona_store import get_persona_config
 
 # 📁 Path to config folder
 DB_PATH = Path(__file__).parent.parent / "permitFlowDb"
 
 # -------------------------------------------------------------------------
-# 📦 Config Loaders
+# 📦 Config Loader
 # -------------------------------------------------------------------------
-
-def load_config(filename: str) -> dict:
+def load_config(filename: str) -> Dict:
     """
     Load a JSON config file from permitFlowDb.
+
+    Args:
+        filename: Name of the JSON file to load.
+
+    Returns:
+        dict: Parsed JSON content.
     """
     with open(DB_PATH / filename, "r", encoding="utf-8") as f:
         return json.load(f)
 
-# 🔄 Load persona definitions, avatar mappings, and system role prompt
-PERSONAS = load_config("personas.json")      # e.g. "mentor", "grumpy", "cheerful"
-AVATAR_MAP = load_config("avatars.json")     # e.g. "Alexandra" → "mentor"
-SYSTEM_PROMPTS = load_config("system_prompts.json")  # e.g. flowbot_role string
+# 🔄 Load system role prompt definitions
+SYSTEM_PROMPTS = load_config("system_prompts.json")
 
 # -------------------------------------------------------------------------
 # 🧾 Persona-Aware Prompt Builder
 # -------------------------------------------------------------------------
-
 def build_flowbot_system_prompt(persona_key: str) -> str:
     """
     Build a system prompt for the LLM based on the selected persona.
@@ -39,9 +46,9 @@ def build_flowbot_system_prompt(persona_key: str) -> str:
         persona_key: The persona name (e.g., "mentor", "grumpy").
 
     Returns:
-        A system prompt string describing the bot's behavior and tone.
+        str: A system prompt string describing the bot's behavior and tone.
     """
-    persona = PERSONAS.get(persona_key, PERSONAS["default"])
+    persona = get_persona_config(persona_key)
     tone = persona.get("tone", "friendly")
     demeanor = persona.get("demeanor", "")
     style = persona.get("style", "")

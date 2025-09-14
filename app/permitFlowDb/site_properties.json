@@ -1,5 +1,8 @@
 {
   "FLOWBOT_PREFERRED_NAME": "FlowBot",
   "SUPPORT_EMAIL": "PermitFlow.Support@bettini.us",
-  "DEFAULT_LANGUAGE": "en-US"
+  "DEFAULT_LANGUAGE": "en-US",
+  "DEFAULT_TIMEZONE": "America/New_York",
+  "MAX_CONTEXT_TURNS": 25
 }
+

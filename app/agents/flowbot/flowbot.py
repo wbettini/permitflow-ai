@@ -5,36 +5,29 @@ from typing import Any, Dict
 from app.core.config import GENERAL_INTENTS
 from app.core.logger import logger
 from app.utils.text_utils import expand_with_synonyms
-from app.prompts.flowbot_prompts import PERSONAS, AVATAR_MAP
+from app.session.persona_store import resolve_persona
+from app.session.session_context import save_to_context_history
+from app.session.memory_manager import get_or_create_memory
 from app.llm_client import validate_with_llm
-
 
 class FlowBot:
     def __init__(self, user_id: str, avatar: str = "default"):
         self.user_id = user_id
         self.avatar = avatar
 
-        avatar_entry = AVATAR_MAP.get(avatar)
-        if not avatar_entry:
-            avatar_entry = next(
-                (v for v in AVATAR_MAP.values()
-                 if isinstance(v, dict) and v.get("default")),
-                {"persona": "default"}
-            )
-
-        if isinstance(avatar_entry, dict):
-            self.persona_key = avatar_entry.get("persona", "default")
-            self.icon = avatar_entry.get("icon")
-        else:
-            self.persona_key = avatar_entry or "default"
-            self.icon = None
-
-        self.persona = PERSONAS.get(self.persona_key, PERSONAS["default"])
-        self.style = self.persona.get("style", "")
-        self.greeting_template = self.persona.get(
-            "greeting", "Hello! I'm {avatar} ({avatar_icon}). How can I assist you today?"
+        # Resolve persona config from avatar
+        persona_config = resolve_persona(avatar)
+        self.persona_key = persona_config["persona_key"]
+        self.style = persona_config["style"]
+        self.icon = persona_config["icon"]
+        self.greeting_template = persona_config.get(
+            "greeting",
+            "Hello! I'm {avatar} ({avatar_icon}). How can I assist you today?"
         )
+        self.fallback_template = persona_config.get("fallback", "")
+
         self.intents = GENERAL_INTENTS
+        self.memory = get_or_create_memory(user_id)  # LangChain ConversationBufferMemory
 
         logger.info(
             f"[FlowBot Init] user_id={self.user_id}, avatar={self.avatar}, "
@@ -64,10 +57,16 @@ class FlowBot:
 
     def _handle_failback(self, message: str) -> str:
         logger.info(f"[Failback Triggered] user_id={self.user_id}, message={message}")
+
+        if self.fallback_template:
+            reply = self.fallback_template.format(**self._placeholder_values())
+            logger.info(f"[Failback Response] user_id={self.user_id}, response={reply}")
+            return reply
+
         failback_intent = self.intents.get("fallback", {})
         responses = failback_intent.get("responses", {})
-
         persona_responses = responses.get(self.persona_key) or responses.get("default")
+
         if isinstance(persona_responses, list) and persona_responses:
             reply = choice(persona_responses).format(**self._placeholder_values())
             logger.info(f"[Failback Response] user_id={self.user_id}, response={reply}")
@@ -110,17 +109,23 @@ class FlowBot:
 
         try:
             validated_reply = await validate_with_llm(
+                session_id=self.user_id,  # pass session for context retrieval
                 persona_key=self.persona_key,
                 style=self.style,
                 user_message=message,
                 candidate_reply=candidate_reply
             )
             if validated_reply and validated_reply.strip():
+                save_to_context_history(self.user_id, "user", message)
+                save_to_context_history(self.user_id, "bot", validated_reply)
                 logger.debug(f"[LLM Validation] Pre: {candidate_reply} | Post: {validated_reply}")
                 return validated_reply
         except Exception as e:
             logger.warning(f"[LLM Validation Skipped] {e}")
 
+        # Save fallback or unvalidated reply
+        save_to_context_history(self.user_id, "user", message)
+        save_to_context_history(self.user_id, "bot", candidate_reply)
         return candidate_reply
 
     def _format_response(self, intent_data: Dict[str, Any]) -> str:
