@@ -3,17 +3,30 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (903.6 ms)
-[0;32m[OK][0m    /health             → 200  (290.0 ms)
+[0;32m[OK][0m    /                   → 200  (553.9 ms)
+[0;32m[OK][0m    /health             → 200  (126.7 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (284.9 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=9f068aed-78dd-4bdc-81bb-310c68c5e038
-[0;32m[OK][0m    Handshake           → 490.9 ms
-[0;32m[OK][0m    TG1 start           → Hey there! Ready to crush some tollgates?
-[0;32m[OK][0m    Purpose reply       → 📍 Tollgate 1: Permit to Design
-Let’s nail down your project’s purpose, features, compliance needs, infrastructure and workforce costs, plus any gap analysis — then you’re cleared for design! 🚀
-[0;32m[OK][0m    Service name reply  → Not sure I follow, but I’m curious — what’s on your mind?
-[0;32m[OK][0m    Owner reply         → Not sure I follow, but I’m curious — what’s on your mind?
-[0;32m[OK][0m    Data class reply    → Not sure I follow, but I’m curious — what’s on your mind?
-[0;32m[OK][0m    TG2 SME review      → Hmm, I didn’t quite catch that this night. Want to try rephrasing? 🦈
+[0;32m[OK][0m    /docs               → 200  (59.4 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=29026d82-987c-4a67-8fc9-2c648f3a148d
+[0;32m[OK][0m    Handshake           → 449.2 ms
+[0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
+[0;32m[OK][0m    Purpose reply       → Sure! Here’s a revised version that fits the persona:
+
+---
+
+🌟 **Tollgate 1: Permit to Design** 🌟
+
+In this step, we’ll dive into the nitty-gritty of your project! We’ll outline its purpose, necessary features, compliance requirements, and even take a good look at infrastructure and workforce costs. Plus, we’ll identify any gaps that need addressing. Once we’ve wrapped up this analysis, you’ll be all set to move on to the exciting design phase! 
+
+Let’s get this project rolling! 🚀
+
+--- 
+
+How does that sound?
+[0;32m[OK][0m    Service name reply  → I'm here and ready to help! Just to make sure I understand you correctly, are you saying that the goal is to speed up the tollgate approval process for project managers? If so, that sounds like a great plan! Let me know if you want to dive deeper into any specifics.
+[0;32m[OK][0m    Owner reply         → I'm here and ready to help! I didn’t quite catch that—could you rephrase it for me? I promise I won’t let it slip through the cracks this time!
+[0;32m[OK][0m    Data class reply    → Sure thing! Here’s a revised version:
+
+"Got it, Bill Bettini is the owner! Just making sure I have everything right. What else can I help you with?"
+[0;32m[OK][0m    TG2 SME review      → I'm here to help, but I didn't quite catch that. Could you rephrase it for me? It sounds important!
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
