@@ -1,0 +1,147 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "title": "AgenticSMEDefinition",
+  "description": "Defines the capabilities, requirements, and style for an Agentic SME role in the Tollgate process.",
+  "type": "object",
+  "properties": {
+    "smeRoleName": {
+      "type": "string",
+      "description": "The title or function this SME represents."
+    },
+    "domainExpertise": {
+      "type": "array",
+      "description": "Areas of knowledge the SME covers.",
+      "items": { "type": "string" }
+    },
+    "tollgateStages": {
+      "type": "array",
+      "description": "Which tollgate(s) this SME participates in.",
+      "items": { "type": "string" }
+    },
+    "jurisdiction": {
+      "type": "string",
+      "description": "Geographic or regulatory scope."
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "reviewActions": {
+          "type": "array",
+          "description": "Actions the Agentic SME can take.",
+          "items": { "type": "string" }
+        },
+        "dataSources": {
+          "type": "array",
+          "description": "Data sources the SME can reference.",
+          "items": { "type": "string" }
+        },
+        "questionTypes": {
+          "type": "array",
+          "description": "Types of questions the SME can ask the applicant.",
+          "items": { "type": "string" }
+        },
+        "decisionAuthority": {
+          "type": "string",
+          "description": "Level of decision-making power."
+        }
+      },
+      "required": ["reviewActions"]
+    },
+    "requirements": {
+      "type": "object",
+      "properties": {
+        "regulatoryReferences": {
+          "type": "array",
+          "description": "Laws, codes, or standards to follow.",
+          "items": { "type": "string" }
+        },
+        "approvalCriteria": {
+          "type": "array",
+          "description": "Conditions that must be met for approval.",
+          "items": { "type": "string" }
+        },
+        "disqualifyingFactors": {
+          "type": "array",
+          "description": "Automatic fail conditions.",
+          "items": { "type": "string" }
+        },
+        "evidenceRequirements": {
+          "type": "array",
+          "description": "Proof needed for compliance.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "interactionStyle": {
+      "type": "object",
+      "properties": {
+        "toneStyle": {
+          "type": "string",
+          "description": "How the SME communicates."
+        },
+        "formalityLevel": {
+          "type": "string",
+          "enum": ["formal", "semi-formal", "conversational"],
+          "description": "Formality level of communication."
+        },
+        "responseStructure": {
+          "type": "string",
+          "description": "How answers are formatted."
+        },
+        "followUpBehavior": {
+          "type": "string",
+          "description": "How the SME handles incomplete answers."
+        }
+      }
+    },
+    "reviewWorkflow": {
+      "type": "object",
+      "properties": {
+        "initialReviewSteps": {
+          "type": "array",
+          "description": "Sequence of checks performed during review.",
+          "items": { "type": "string" }
+        },
+        "escalationRules": {
+          "type": "array",
+          "description": "When to involve another SME or human.",
+          "items": { "type": "string" }
+        },
+        "approvalOutputFormat": {
+          "type": "string",
+          "description": "Format for recording decisions."
+        },
+        "timeExpectations": {
+          "type": "string",
+          "description": "SLA for responses."
+        }
+      }
+    },
+    "training": {
+      "type": "object",
+      "properties": {
+        "trainingMaterials": {
+          "type": "array",
+          "description": "Documents or datasets to ingest.",
+          "items": { "type": "string" }
+        },
+        "exampleCases": {
+          "type": "array",
+          "description": "Approved and declined examples.",
+          "items": { "type": "string" }
+        },
+        "commonPitfalls": {
+          "type": "array",
+          "description": "Frequent applicant mistakes.",
+          "items": { "type": "string" }
+        },
+        "preferredPhrasing": {
+          "type": "array",
+          "description": "Standard language for responses.",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "required": ["smeRoleName", "domainExpertise", "tollgateStages", "capabilities"]
+}
