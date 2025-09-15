@@ -3,30 +3,50 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (553.9 ms)
-[0;32m[OK][0m    /health             → 200  (126.7 ms)
+[0;32m[OK][0m    /                   → 200  (797.1 ms)
+[0;32m[OK][0m    /health             → 200  (176.5 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (59.4 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=29026d82-987c-4a67-8fc9-2c648f3a148d
-[0;32m[OK][0m    Handshake           → 449.2 ms
+[0;32m[OK][0m    /docs               → 200  (133.1 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=98a80f4d-d1d0-4179-9445-2cbeaa476206
+[0;32m[OK][0m    Handshake           → 561.3 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
-[0;32m[OK][0m    Purpose reply       → Sure! Here’s a revised version that fits the persona:
+[0;32m[OK][0m    Purpose reply       → Sure! Here’s a revised version that matches the persona:
 
 ---
 
-🌟 **Tollgate 1: Permit to Design** 🌟
+📍 **Tollgate 1: Permit to Design**
 
-In this step, we’ll dive into the nitty-gritty of your project! We’ll outline its purpose, necessary features, compliance requirements, and even take a good look at infrastructure and workforce costs. Plus, we’ll identify any gaps that need addressing. Once we’ve wrapped up this analysis, you’ll be all set to move on to the exciting design phase! 
-
-Let’s get this project rolling! 🚀
+Great news! We’ll dive into capturing your project’s purpose, required features, compliance needs, and even take a look at infrastructure and workforce costs. Plus, we'll perform a gap analysis to make sure nothing slips through the cracks. Once all that's wrapped up, you’ll be ready to jump into the exciting design phase. Let’s make it happen! 
 
 --- 
 
 How does that sound?
-[0;32m[OK][0m    Service name reply  → I'm here and ready to help! Just to make sure I understand you correctly, are you saying that the goal is to speed up the tollgate approval process for project managers? If so, that sounds like a great plan! Let me know if you want to dive deeper into any specifics.
-[0;32m[OK][0m    Owner reply         → I'm here and ready to help! I didn’t quite catch that—could you rephrase it for me? I promise I won’t let it slip through the cracks this time!
-[0;32m[OK][0m    Data class reply    → Sure thing! Here’s a revised version:
+[0;32m[OK][0m    Service name reply  → I'm here, but I didn’t quite catch that. Could you rephrase? Just trying to make sure I’m on the same page before we speed through those tollgate approvals! 🚀
+[0;32m[OK][0m    Owner reply         → Got it! Here’s a revised response that aligns better with the persona:
 
-"Got it, Bill Bettini is the owner! Just making sure I have everything right. What else can I help you with?"
-[0;32m[OK][0m    TG2 SME review      → I'm here to help, but I didn't quite catch that. Could you rephrase it for me? It sounds important!
+---
+
+Ah, I see! So we’re talking about PermitFlow. That sounds like a fantastic service to streamline those tollgate approvals for project managers! Let’s get into the details and make sure everything flows smoothly. What specific features or aspects would you like to discuss? 🚀 
+
+--- 
+
+How does that sound?
+[0;32m[OK][0m    Data class reply    → Got it! Here’s a revised response that fits the persona:
+
+---
+
+Great to know the owner is Bill Bettini! 🎉 It sounds like PermitFlow is in good hands. What else would you like to share about the service or any specific features you’re focusing on? Let’s keep this momentum going! 🚀 
+
+--- 
+
+How does that sound?
+[0;32m[OK][0m    TG2 SME review      → Here’s a revised response that fits the persona:
+
+---
+
+Got it! So, the data classification for PermitFlow is non-private. That makes things a bit easier! 🔓 What other details would you like to dive into? Let’s keep the momentum going! 🚀
+
+--- 
+
+How does that sound?
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
