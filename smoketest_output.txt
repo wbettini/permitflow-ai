@@ -3,58 +3,66 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (2175.1 ms)
-[0;32m[OK][0m    /health             → 200  (260.5 ms)
+[0;32m[OK][0m    /                   → 200  (485.2 ms)
+[0;32m[OK][0m    /health             → 200  (192.5 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (159.7 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=fb8762d3-27d3-4aa8-86e5-2f8c83af5f7a
-[0;32m[OK][0m    Handshake           → 1474.9 ms
+[0;32m[OK][0m    /docs               → 200  (137.4 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=e61d9ba4-61f2-4d10-ab8b-ea3bebc73113
+[0;32m[OK][0m    Handshake           → 489.4 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
-[0;32m[OK][0m    Purpose reply       → Sure, here’s a revised version to match the persona:
+[0;32m[OK][0m    Purpose reply       → It looks like the candidate reply is mostly on point, but let's add a touch more clarity and warmth. Here’s the revised version:
 
 ---
 
-📍 **Tollgate 1: Permit to Design**
+📍 Tollgate 1: Permit to Design
 
-Great news! We’ll start by capturing the project’s purpose, required features, compliance needs, infrastructure costs, and workforce expenses. We’ll also conduct a gap analysis to identify any areas for improvement. Once we’ve got all that sorted, you’ll be ready to dive into the design phase. Let’s make this project shine! ✨
-
---- 
-
-How's that?
-[0;32m[OK][0m    Service name reply  → Sure! Here’s a revised reply that fits the persona:
+We’ll dive into capturing your project’s purpose, the features you need, compliance requirements, and even take a close look at infrastructure and workforce costs. Don’t worry; we’ll also tackle any gaps along the way! Once everything is in order, you’ll be all set to move on to the design phase. Let’s make this happen! 
 
 ---
-
-Got it! So the purpose is to speed up those tollgate approvals for project managers, right? That sounds like a fantastic goal! Let’s streamline the process so we can keep everything moving smoothly. 🚀 If you have any specific ideas or needs in mind, feel free to share!
-
---- 
 
 How does that sound?
-[0;32m[OK][0m    Owner reply         → Sure! Here’s a revised reply that fits the persona:
+[0;32m[OK][0m    Service name reply  → Sure thing! Here’s a refined version that aligns with the purpose of expediting tollgate approvals for project managers:
 
 ---
 
-Ah, I see! The service name is PermitFlow. That’s a catchy name! Let’s ensure it flows smoothly through those tollgate approvals. If you need help with anything specific about PermitFlow, just let me know! 🌊
+📍 Tollgate 1: Permit to Design
 
---- 
+Our goal here is to streamline the tollgate approval process for project managers. We’ll focus on clearly defining your project’s purpose, outlining essential features, ensuring compliance, and analyzing infrastructure and workforce costs. And don’t worry, we’ll identify and address any gaps along the way! Once we’ve got everything sorted, you’ll be ready to charge into the design phase. Let’s make this process as smooth as possible!
+
+---
 
 How does that sound?
-[0;32m[OK][0m    Data class reply    → Sure! Here's a revised response that fits the persona:
+[0;32m[OK][0m    Owner reply         → Got it! Here’s a revised version that incorporates the service name "PermitFlow" while maintaining clarity and a friendly tone:
 
 ---
 
-Got it! The owner is Bill Bettini. Great to know! If there's anything specific you’d like to discuss about PermitFlow or any plans Bill has, just let me know. I'm here to help! 😊 
+📍 Tollgate 1: PermitFlow - Permit to Design
 
---- 
+With PermitFlow, we aim to streamline the tollgate approval process for project managers. We’ll focus on clearly defining your project’s purpose, outlining essential features, ensuring compliance, and analyzing infrastructure and workforce costs. And don’t worry, we’ll identify and address any gaps along the way! Once we’ve got everything sorted, you’ll be ready to charge into the design phase. Let’s make this process as smooth as possible!
+
+---
 
 How does that sound?
-[0;32m[OK][0m    TG2 SME review      → Sure! Here’s a revised response that aligns with the persona:
+[0;32m[OK][0m    Data class reply    → Sure! Here’s a rephrased version that's relevant and maintains the friendly tone:
 
 ---
 
-Got it! The data classification is non-private. That simplifies things quite a bit! If you have any other details or questions about PermitFlow or the project, feel free to share—I’m all ears! 🎧
+📍 Tollgate 1: PermitFlow - Permit to Design
 
---- 
+With PermitFlow, our mission is to simplify the tollgate approval process for project managers like Bill Bettini. We’ll work together to clearly define your project’s purpose, outline essential features, ensure compliance, and assess infrastructure and workforce costs. Plus, we’ll identify and address any gaps along the way! Once everything is in place, you’ll be all set to jump into the design phase. Let’s make this journey as smooth as possible!
+
+---
+
+How does that sound?
+[0;32m[OK][0m    TG2 SME review      → Sure! Here’s a revised version that maintains clarity and a friendly tone while addressing the data classification aspect:
+
+---
+
+📍 Tollgate 1: PermitFlow - Permit to Design
+
+With PermitFlow, our mission is to simplify the tollgate approval process for project managers like Bill Bettini. We’ll work together to clearly define your project’s purpose, outline essential features, ensure compliance, and assess infrastructure and workforce costs—all while keeping everything classified as non-private. Plus, we’ll identify and address any gaps along the way! Once everything is in place, you’ll be all set to jump into the design phase. Let’s make this journey as smooth as possible!
+
+---
 
 How does that sound?
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
