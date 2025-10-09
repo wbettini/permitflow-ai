@@ -3,31 +3,58 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (555.3 ms)
-[0;32m[OK][0m    /health             → 200  (186.2 ms)
+[0;32m[OK][0m    /                   → 200  (513.4 ms)
+[0;32m[OK][0m    /health             → 200  (82.0 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (249.5 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=972aacb5-fad9-480a-804f-596a057dea85
-[0;32m[OK][0m    Handshake           → 491.8 ms
+[0;32m[OK][0m    /docs               → 200  (54.3 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=c47faf53-88e3-4dcf-a689-6953b5193469
+[0;32m[OK][0m    Handshake           → 393.8 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
-[0;32m[OK][0m    Purpose reply       → Sure thing! Here's a revised version to match the persona:
+[0;32m[OK][0m    Purpose reply       → It looks like the candidate reply is mostly on point, but it could use a bit more clarity and a friendly touch. Here’s a revised version:
 
-📍 Tollgate 1: Permit to Design  
-Let's get your project off to a great start! We'll gather all the essential details, including the project’s purpose, required features, compliance needs, infrastructure costs, workforce expenses, and any gaps we need to address. Once we have everything sorted, you'll be all set to dive into the design phase. Ready to roll? 🚀
-[0;32m[OK][0m    Service name reply  → Absolutely, let’s fine-tune that! Here’s a revised version:
+---
 
-📍 Tollgate 1: Permit to Design  
-Got it! The aim is to streamline those tollgate approvals for project managers. Let’s make sure we gather all the necessary details to speed things along—like the project’s purpose, required features, compliance needs, infrastructure costs, workforce expenses, and anything else we might need to tackle. Once we have everything in place, we’ll be ready to kick off the design phase! Ready to hit the gas? 🚀
-[0;32m[OK][0m    Owner reply         → It looks like we need to incorporate that service name! Here’s a revised version:
+📍 **Tollgate 1: Permit to Design**
 
-📍 Tollgate 1: Permit to Design  
-Great! The service name is PermitFlow. Our goal is to streamline tollgate approvals for project managers. Let’s gather all the essential details to keep things moving smoothly—like the project’s purpose, required features, compliance needs, infrastructure costs, workforce expenses, and any other gaps we should address. Once we have everything sorted out, we’ll be ready to rev up the design phase! Ready to shift into high gear? 🚀
-[0;32m[OK][0m    Data class reply    → Absolutely, let’s work that in! Here’s a revised version:
+Great news! We'll start by capturing your project's purpose, essential features, compliance requirements, infrastructure needs, workforce costs, and any gap analysis. Once we have all that sorted out, you'll be all set to move on to the exciting design phase. Let’s get this project rolling! 🚀
 
-📍 Tollgate 1: Permit to Design  
-Awesome! The owner is Bill Bettini. Our mission with PermitFlow is to streamline tollgate approvals for project managers. Let's gather all the vital details to keep the momentum going—like the project’s purpose, required features, compliance needs, infrastructure costs, workforce expenses, and any other gaps we need to address. Once we’ve got everything sorted, we'll be ready to shift gears into the design phase! Ready to accelerate? 🚀
-[0;32m[OK][0m    TG2 SME review      → Sure thing! Here’s a revised version that keeps it friendly and on point:
+--- 
 
-📍 Tollgate 1: Permit to Design  
-Got it! The data classification for this project is non-private. So, let’s keep our focus on streamlining those tollgate approvals for project managers. We’ll gather all the essential details—like the project’s purpose, required features, compliance needs, infrastructure costs, workforce expenses, and any other gaps we should address. Once we have everything sorted, we'll be ready to shift gears into the design phase! Ready to hit the road? 🚀
+How does that sound?
+[0;32m[OK][0m    Service name reply  → Here’s a friendly and clear revision for the candidate reply:
+
+---
+
+I’m all ears! It sounds like you want to speed up the tollgate approvals for project managers. Could you give me a bit more detail or clarify what you need help with? I’m here to assist! 😊
+
+--- 
+
+How does that sound?
+[0;32m[OK][0m    Owner reply         → Here’s a friendly and engaging revision for the candidate reply:
+
+---
+
+Got it! PermitFlow is the name of the service, right? Let’s make sure we’re on the same page. Could you clarify what specific information you’d like to include? I’m here to help you streamline those tollgate approvals! 😊 
+
+--- 
+
+How does that sound?
+[0;32m[OK][0m    Data class reply    → Here’s a friendly and clear revision for the candidate reply:
+
+---
+
+Great to meet you, Bill Bettini! I’m ready to dive in. Could you please share a bit more about what you need? I’m here to help you make PermitFlow a success! 😊
+
+--- 
+
+How does that sound?
+[0;32m[OK][0m    TG2 SME review      → Here’s a friendly and engaging revision for the candidate reply:
+
+---
+
+Got it! So the data classification is non-private, right? That’s great to know! If you have any specific questions or need assistance with anything else, just let me know. I’m here to help! 😊 
+
+--- 
+
+How does that sound?
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
