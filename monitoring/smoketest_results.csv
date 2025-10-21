@@ -269,3 +269,7 @@ timestamp,endpoint,status,response_time_ms
 2025-10-20T02:41:26.690423,/health,"ERROR(HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10))",10110.6
 2025-10-20T02:41:26.690423,/docs,"ERROR(HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10))",10117.9
 2025-10-20T02:41:26.690423,WebSocket,ERROR(Connection timed out),0.0
+2025-10-21T02:37:55.258711,/,OK,99.8
+2025-10-21T02:37:55.258711,/health,OK,20.6
+2025-10-21T02:37:55.258711,/docs,OK,12.7
+2025-10-21T02:37:55.258711,WebSocket,"ERROR(Handshake status 403 Forbidden -+-+- {'content-length': '0', 'content-type': 'text/plain', 'date': 'Tue, 21 Oct 2025 02:37:55 GMT', 'set-cookie': 'ARRAffinity=184b93d9bd44b3d34ffbdb54e8c0a88f58a67edb02b538a38e803ce6c23758f2;Path=/;HttpOnly;Secure;Domain=permitflow-ai-demo.azurewebsites.net; ARRAffinitySameSite=184b93d9bd44b3d34ffbdb54e8c0a88f58a67edb02b538a38e803ce6c23758f2;Path=/;HttpOnly;SameSite=None;Secure;Domain=permitflow-ai-demo.azurewebsites.net'} -+-+- b'')",0.0
