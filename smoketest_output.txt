@@ -3,58 +3,62 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (509.7 ms)
-[0;32m[OK][0m    /health             → 200  (178.8 ms)
+[0;32m[OK][0m    /                   → 200  (498.0 ms)
+[0;32m[OK][0m    /health             → 200  (257.6 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (153.8 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=41768d0d-cc03-4284-92e1-28d122c3c013
-[0;32m[OK][0m    Handshake           → 364.3 ms
+[0;32m[OK][0m    /docs               → 200  (256.2 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=dc567e37-a0a8-4717-88dd-96d2ede33303
+[0;32m[OK][0m    Handshake           → 510.2 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
-[0;32m[OK][0m    Purpose reply       → Sure! Here’s a revised version that matches the persona:
+[0;32m[OK][0m    Purpose reply       → It looks like the candidate's reply is informative, but it could use a bit more clarity and a touch of friendliness! Here’s a revised version that aligns with my persona:
 
 ---
 
-📍 Tollgate 1: Permit to Design
+📍 **Tollgate 1: Permit to Design**
 
-Let's dive into your project! We'll outline its purpose, the features you need, compliance requirements, and even take a look at infrastructure and workforce costs. Plus, we'll conduct a gap analysis to ensure everything is in order. Once we have all that sorted, you'll be ready to leap into the design phase. Exciting times ahead! 🚀
+Great news! We’ll start by capturing your project’s purpose, required features, compliance requirements, and infrastructure and workforce costs. Plus, we'll conduct a gap analysis to identify any missing elements. Once we have everything in place, you’ll be ready to move on to the design phase! Let’s get this project rolling! 🚀
 
 --- 
 
-Let me know if you need any further adjustments or information!
-[0;32m[OK][0m    Service name reply  → Got it! Here’s a revised response that fits the persona:
+How's that?
+[0;32m[OK][0m    Service name reply  → Absolutely, I’d be happy to rephrase that for clarity! Here’s a friendly and clear response:
 
 ---
 
-Ah, I see! So the purpose is to speed up those tollgate approvals for project managers. That sounds like a fantastic goal! 🚀 Let’s make sure we streamline the process and keep everyone on track. If you have any specific features or requirements in mind to help with that, just let me know!
-
---- 
-
-Let me know if you need any further adjustments or information!
-[0;32m[OK][0m    Owner reply         → Sure! Here’s a revised response that fits the persona:
+**Purpose of the Permit to Design**: 
+The goal here is to speed up the tollgate approvals for our project managers. By doing this, we can ensure that projects keep moving forward without unnecessary delays. Let’s streamline the process together! 🚀
 
 ---
 
-Got it! The service name is PermitFlow—what a catchy name! 🎉 Let’s keep the momentum going. If you have any details about how PermitFlow will work or any specific features you’d like to highlight, just let me know! I’m here to help you craft the perfect plan.
-
---- 
-
-Let me know if you need any further adjustments or information!
-[0;32m[OK][0m    Data class reply    → Sure! Here’s a revised response that fits the persona:
+How does that sound?
+[0;32m[OK][0m    Owner reply         → Sure thing! Here’s a friendly and clear response that incorporates the service name while maintaining the helpful tone:
 
 ---
 
-Got it! The owner is Bill Bettini. Great to know! If there's anything specific you'd like to share about Bill's vision for PermitFlow or how he plans to lead the charge, I’m all ears! Let’s make this project shine! 🌟
-
---- 
-
-Let me know if you need any further adjustments or information!
-[0;32m[OK][0m    TG2 SME review      → Sure! Here’s a revised response that fits the persona:
+**Service Name**: PermitFlow  
+Got it! PermitFlow is designed to help expedite tollgate approvals for our project managers. Our aim is to keep projects moving smoothly and efficiently, minimizing any potential delays. Let’s work together to streamline this process! 🚀
 
 ---
 
-Got it! The data classification is non-private. That's good to know! If you have any specific guidelines or requirements regarding this classification, just share them with me. We want to ensure that everything flows smoothly with PermitFlow! 🌊
+How does that sound?
+[0;32m[OK][0m    Data class reply    → Sure! Here’s a friendly and clear response that includes the owner’s name:
 
 ---
 
-Let me know if you need any further adjustments or information!
+**Owner**: Bill Bettini  
+Just to clarify, the owner of PermitFlow is Bill Bettini. If you have any questions or need more information, I’m here to help! Let’s make this process as smooth as possible! 🚀
+
+---
+
+How does that sound?
+[0;32m[OK][0m    TG2 SME review      → Sure thing! Here’s a friendly and clear response that includes the data classification:
+
+---
+
+**Data Classification**: Non-private  
+Just to clarify, the data classification for PermitFlow is non-private. This means that the information can be shared more freely without concerns about confidentiality. If you have any further questions or need more details, feel free to ask! Let’s keep things transparent! 🚀
+
+---
+
+How does that sound?
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
