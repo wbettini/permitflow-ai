@@ -341,3 +341,7 @@ timestamp,endpoint,status,response_time_ms
 2025-11-07T02:40:00.520458,/health,"ERROR(HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10))",10039.2
 2025-11-07T02:40:00.520458,/docs,OK,8615.1
 2025-11-07T02:40:00.520458,WebSocket,"ERROR(Handshake status 403 Forbidden -+-+- {'content-length': '0', 'content-type': 'text/plain', 'date': 'Fri, 07 Nov 2025 02:40:29 GMT', 'set-cookie': 'ARRAffinity=bec1e06e53eec8d5c5f389b3597570d9375ce0ef48cc72401db89ecd02d82bd0;Path=/;HttpOnly;Secure;Domain=permitflow-ai-demo.azurewebsites.net; ARRAffinitySameSite=bec1e06e53eec8d5c5f389b3597570d9375ce0ef48cc72401db89ecd02d82bd0;Path=/;HttpOnly;SameSite=None;Secure;Domain=permitflow-ai-demo.azurewebsites.net'} -+-+- b'')",0.0
+2025-11-08T02:36:20.609568,/,OK,210.2
+2025-11-08T02:36:20.609568,/health,OK,197.7
+2025-11-08T02:36:20.609568,/docs,OK,198.8
+2025-11-08T02:36:20.609568,WebSocket,"ERROR(Handshake status 403 Forbidden -+-+- {'content-length': '0', 'content-type': 'text/plain', 'date': 'Sat, 08 Nov 2025 02:36:21 GMT', 'set-cookie': 'ARRAffinity=bec1e06e53eec8d5c5f389b3597570d9375ce0ef48cc72401db89ecd02d82bd0;Path=/;HttpOnly;Secure;Domain=permitflow-ai-demo.azurewebsites.net; ARRAffinitySameSite=bec1e06e53eec8d5c5f389b3597570d9375ce0ef48cc72401db89ecd02d82bd0;Path=/;HttpOnly;SameSite=None;Secure;Domain=permitflow-ai-demo.azurewebsites.net'} -+-+- b'')",0.0

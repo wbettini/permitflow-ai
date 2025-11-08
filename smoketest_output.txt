@@ -3,8 +3,31 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;31m[ERROR][0m    /                   → HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10)  (10052.2 ms)
-[0;31m[ERROR][0m    /health             → HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10)  (10042.4 ms)
-[0;31m[ERROR][0m    /docs               → HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10)  (10053.0 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=6b51df78-6115-4fe4-9b24-4f3f57f9dfaf
+[0;32m[OK][0m    /                   → 200  (215.5 ms)
+[0;32m[OK][0m    /health             → 200  (214.2 ms)
+                               Payload: {'status': 'ok'}
+[0;32m[OK][0m    /docs               → 200  (211.0 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=32c5d5a0-e594-444e-8bf5-c956e31326ee
+[0;32m[OK][0m    Handshake           → 804.5 ms
+[0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
+[0;32m[OK][0m    Purpose reply       → Sure! Here’s a revised version that matches the persona's tone and style:
+
+📍 **Tollgate 1: Permit to Design**  
+Great news! We’re ready to kick off your project with a Permit to Design. This phase helps us understand your project’s purpose, the features you need, compliance requirements, and the costs for infrastructure and workforce. Plus, we’ll conduct a gap analysis to ensure everything’s in tip-top shape! Once we’ve wrapped this up, you’ll be all set to move on to the design phase. Let’s get started! 🚀
+[0;32m[OK][0m    Service name reply  → It looks like we’re diving right into the nitty-gritty! Here’s a revised response that aligns with the persona:
+
+📍 **Tollgate 1: Permit to Design**  
+Got it! The purpose of this phase is to speed up those tollgate approvals to keep your project managers on track. We’ll assess your project needs, compliance requirements, and any cost considerations. Plus, we'll make sure everything is aligned and ready to roll! Once we nail this phase down, you'll be all set to breeze into the design stage. Let’s get this show on the road! 🚀
+[0;32m[OK][0m    Owner reply         → Absolutely! Here’s a revised response that fits the persona:
+
+📍 **PermitFlow**  
+Ah, got it! PermitFlow is the name of the game! This service is all about streamlining those tollgate approvals to keep your project managers moving smoothly. If you have any specific questions or need more details about how PermitFlow works, just let me know—I'm here to help! 🚀
+[0;32m[OK][0m    Data class reply    → Sure thing! Here’s a revised response that aligns with the persona:
+
+📍 **PermitFlow**  
+Got it, the owner is Bill Bettini! If there's anything specific you'd like to know about PermitFlow or how it fits into your project, just give me a shout. I’m all ears and ready to assist! 🚀
+[0;32m[OK][0m    TG2 SME review      → Sure thing! Here’s a revised response that aligns with the persona:
+
+📍 **PermitFlow**  
+Got it! The data classification is non-private. That’s great to know! If you have any more details or questions about how this impacts our process, feel free to share. I’m here to help make everything clear and smooth! 🚀
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
