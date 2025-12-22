@@ -8,7 +8,8 @@ import multiprocessing
 # On small Azure App Service plans, each worker is a full Python process.
 # Reducing to 1 worker minimizes memory usage and avoids OOM kills.
 # Increase this if you move to a larger plan with more RAM.
-workers = 2
+# NOTE: For SQLite, use 1 worker to avoid "database is locked" errors.
+workers = 1
 
 # Use Uvicorn's ASGI worker class for FastAPI
 worker_class = "uvicorn.workers.UvicornWorker"

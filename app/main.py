@@ -10,14 +10,32 @@ Responsibilities:
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
+from contextlib import asynccontextmanager
 import os
 
-from app.routers import flowbot_ws, site_properties, persona_preview
+from app.routers import flowbot_ws, site_properties, persona_preview, db_inspector
+from app.db.init_db import init_db
+
+# -------------------------
+# Lifecycle Management
+# -------------------------
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Create DB tables if they don't exist
+    try:
+        print("🛠️  Initializing database...")
+        init_db()
+    except Exception as e:
+        print(f"❌ Database initialization failed: {e}")
+    yield
+    # Shutdown logic (if any) goes here
 
 # -------------------------
 # FastAPI App Initialization
 # -------------------------
-app = FastAPI(title="PermitFlow-AI", version="0.2.0")
+app = FastAPI(title="PermitFlow-AI", version="0.2.0", lifespan=lifespan)
 print("🚀 FlowBot is live and listening...")
 
 # -------------------------
@@ -26,10 +44,13 @@ print("🚀 FlowBot is live and listening...")
 app.include_router(flowbot_ws.router)
 app.include_router(site_properties.router)
 app.include_router(persona_preview.router)
+app.include_router(db_inspector.router)
 
 # -------------------------
 # Serve Chat UI + Static Assets
 # -------------------------
+
+
 @app.get("/")
 async def root():
     index_path = os.path.join("public", "index.html")
@@ -42,6 +63,8 @@ app.mount("/static", StaticFiles(directory="public"), name="static")
 # -------------------------
 # Health Check
 # -------------------------
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
@@ -49,6 +72,8 @@ def health():
 # -------------------------
 # Version Endpoint
 # -------------------------
+
+
 @app.get("/version")
 def version():
     return {

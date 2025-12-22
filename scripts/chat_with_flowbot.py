@@ -1,23 +1,18 @@
+from app.agents.flowbot.flowbot import FlowBot
 import sys
+import asyncio
 from pathlib import Path
 
 # --- Ensure project root is in sys.path ---
-# This makes imports work no matter where you run the script from
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from core.state_manager import StateManager
-from app.agents.flowbot.flowbot import FlowBot
 
-# Define the required fields for the application
-required_fields = ["service_name", "owner", "data_classification"]
+async def main():
+    # Create FlowBot
+    user_id = "test_user_123"
+    bot = FlowBot(user_id=user_id)
 
-def main():
-    # Create StateManager and FlowBot
-    state = StateManager()
-    bot = FlowBot(state, required_fields, prompts_file="app/permitFlowDb/tollgate_prompts.json")
-
-    # Start the conversation
-    print(bot.start("cloud service permit"))
+    print("FlowBot initialized. Type 'quit' to exit.")
 
     # Simple REPL loop
     while True:
@@ -27,7 +22,7 @@ def main():
                 print("Exiting FlowBot conversation.")
                 break
 
-            response = bot.converse(user_input)
+            response = await bot.handle_message(user_input)
             print(f"\nFlowBot: {response}")
 
         except KeyboardInterrupt:
@@ -35,4 +30,4 @@ def main():
             break
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
