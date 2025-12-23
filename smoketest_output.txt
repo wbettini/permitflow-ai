@@ -3,22 +3,18 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (696.6 ms)
-[0;32m[OK][0m    /health             → 200  (127.3 ms)
+[0;32m[OK][0m    /                   → 200  (448.0 ms)
+[0;32m[OK][0m    /health             → 200  (76.4 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (204.7 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=3b38d651-2c7b-4e3a-9584-70feb4c045a6
-[0;32m[OK][0m    Handshake           → 794.7 ms
+[0;32m[OK][0m    /docs               → 200  (66.9 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=e17a6750-ac4b-4d42-af8f-34e4a66a3a21
+[0;32m[OK][0m    Handshake           → 369.1 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
-[0;32m[OK][0m    Purpose reply       → Sure! Here’s a revised version that aligns with the persona:
+[0;32m[OK][0m    Purpose reply       → 📍 Tollgate 1: Permit to Design
 
-📍 Tollgate 1: Permit to Design
-
-We’ll kick things off by capturing your project’s purpose, essential features, compliance requirements, and all those pesky infrastructure and workforce costs. Plus, we’ll conduct a gap analysis to ensure nothing slips through the cracks! Once we’ve got everything lined up, you’ll be all set to dive into the design phase. Let’s make this project shine! 🌟
-[0;32m[OK][0m    Service name reply  → Sure! Here’s a revised version that matches the persona:
-
-Got it! So, you’re looking to streamline those tollgate approvals for project managers. That sounds like a fantastic goal! 🚀 Let's make the process as smooth as possible so everyone can get back to focusing on what they do best. What specific aspects are you looking to improve?
-[0;32m[OK][0m    Owner reply         → Got it! The service name is PermitFlow—what a catchy name! 🎉 How can I assist you in getting PermitFlow up and running smoothly? Are there specific features or processes you’d like to focus on? Let’s make it flow seamlessly!
-[0;32m[OK][0m    Data class reply    → Got it! The owner is Bill Bettini. Thanks for sharing! 🎉 If you need any specific information or assistance regarding PermitFlow or anything related to the project, just let me know. I'm here to help make everything flow smoothly!
-[0;32m[OK][0m    TG2 SME review      → Got it! So, the data classification for PermitFlow is non-private. That’s helpful to know! 🗂️ If you have any other details or questions about the project, feel free to share. I'm here to help everything flow smoothly!
+Great news! We’ll gather all the essential details about your project, including its purpose, required features, compliance needs, infrastructure costs, workforce expenses, and any gap analysis. Once we have everything in place, you’ll be all set to move on to the design phase. Let’s get this show on the road! 🚀
+[0;32m[OK][0m    Service name reply  → I'm here and ready to help! So, if I understand correctly, the purpose of your project is to speed up the tollgate approvals for project managers. That sounds like a fantastic goal! 🚀 Let’s dive into the details so we can make this process as smooth as possible. What specific features or requirements do you have in mind?
+[0;32m[OK][0m    Owner reply         → That sounds like a great name! PermitFlow has a nice ring to it! 🎉 Now, let’s get into the nitty-gritty. What specific features or requirements do you envision for PermitFlow to help expedite those tollgate approvals? I'm all ears!
+[0;32m[OK][0m    Data class reply    → Got it! So, the owner of PermitFlow is Bill Bettini. That’s great to know! 🎉 Now, let’s keep the momentum going. What specific features or requirements do you think would make PermitFlow a standout service for expediting those tollgate approvals? I'm excited to hear your ideas!
+[0;32m[OK][0m    TG2 SME review      → Got it! So, the data classification for PermitFlow is non-private. That’s helpful information! 📊 Now, let’s keep the ball rolling. What specific features or requirements do you think would make PermitFlow a standout service for expediting those tollgate approvals? I’m eager to hear your thoughts!
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
