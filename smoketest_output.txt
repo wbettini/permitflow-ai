@@ -3,12 +3,12 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (625.5 ms)
-[0;32m[OK][0m    /health             → 200  (342.5 ms)
+[0;32m[OK][0m    /                   → 200  (1429.3 ms)
+[0;32m[OK][0m    /health             → 200  (659.7 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (290.7 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=55b8c3d8-4e49-4b11-9890-f171025a9a9f
-[0;32m[OK][0m    Handshake           → 760.1 ms
+[0;32m[OK][0m    /docs               → 200  (306.2 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=c833f68f-7193-4308-96b1-aa95141bb412
+[0;32m[OK][0m    Handshake           → 1878.1 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
 [0;32m[OK][0m    Purpose reply       → 📍 Tollgate 1: Permit to Design
 
