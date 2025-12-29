@@ -3,20 +3,18 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (338.8 ms)
-[0;32m[OK][0m    /health             → 200  (248.2 ms)
+[0;32m[OK][0m    /                   → 200  (132.1 ms)
+[0;32m[OK][0m    /health             → 200  (131.8 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (219.8 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=685c76ee-dd9a-4596-8089-698a480ff642
-[0;32m[OK][0m    Handshake           → 650.6 ms
+[0;32m[OK][0m    /docs               → 200  (92.0 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=6fc77780-4ad6-409d-b577-3c2738d1e009
+[0;32m[OK][0m    Handshake           → 526.5 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
 [0;32m[OK][0m    Purpose reply       → 📍 Tollgate 1: Permit to Design
 
 Great news! We’ll gather all the essential details about your project, including its purpose, required features, compliance needs, infrastructure costs, workforce expenses, and any gap analysis. Once we have everything in place, you’ll be all set to move on to the design phase. Let’s get this show on the road! 🚀
-[0;32m[OK][0m    Service name reply  → I'm here, but I didn't quite catch that. Could you rephrase? 
-
-Just kidding! I got it! So, the purpose is to speed up those tollgate approvals for project managers. That’s a fantastic goal! Let’s make sure we gather all the necessary details to help streamline that process. What specific features or requirements do you have in mind? 🚀
-[0;32m[OK][0m    Owner reply         → Got it! So the service name is PermitFlow. That’s a catchy name! 🌟 Now, let’s dive into the details. What specific features or requirements do you envision for PermitFlow to help expedite those tollgate approvals? I’m all ears! 👂🚀
-[0;32m[OK][0m    Data class reply    → Got it! So the owner of PermitFlow is Bill Bettini. That’s great to know! 👏 Now, let’s keep the momentum going. What other details or features do you want to include for PermitFlow to make those tollgate approvals a breeze? I’m ready to help! 🚀
-[0;32m[OK][0m    TG2 SME review      → Got it! So the data classification for PermitFlow is non-private. That’s helpful information! 📊 Now, let’s keep the ball rolling. What other details or features do you want to include to make PermitFlow the ultimate tool for expediting those tollgate approvals? I’m all set to assist! 🚀
+[0;32m[OK][0m    Service name reply  → I'm here and ready to help! So, if I understand correctly, the purpose of your project is to speed up the tollgate approvals for project managers. That sounds like a fantastic goal! 🚀 Let’s dive into the details so we can make this process as smooth as possible. What specific features or requirements do you have in mind?
+[0;32m[OK][0m    Owner reply         → Got it! The service name is PermitFlow. That’s a catchy name! 🎉 Now, let’s keep the momentum going. What specific features or requirements do you envision for PermitFlow to help expedite those tollgate approvals?
+[0;32m[OK][0m    Data class reply    → Got it! The owner of PermitFlow is Bill Bettini. That’s great to know! 🎉 Now, let’s keep the ball rolling. What specific features or requirements do you think would make PermitFlow even more effective in expediting those tollgate approvals?
+[0;32m[OK][0m    TG2 SME review      → Got it! The data classification for PermitFlow is non-private. That’s helpful information! 📊 Now, let’s keep the momentum going. What other features or requirements do you think would enhance PermitFlow and help speed up those tollgate approvals?
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
