@@ -3,12 +3,12 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (1593.9 ms)
-[0;32m[OK][0m    /health             → 200  (166.4 ms)
+[0;32m[OK][0m    /                   → 200  (89.2 ms)
+[0;32m[OK][0m    /health             → 200  (106.7 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (88.0 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=53c775ca-85a4-4d1b-8c9f-567e8f0d0053
-[0;32m[OK][0m    Handshake           → 1796.4 ms
+[0;32m[OK][0m    /docs               → 200  (135.0 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=0629662e-8f0d-4f72-8598-18e534c25239
+[0;32m[OK][0m    Handshake           → 2369.7 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
 [0;32m[OK][0m    Purpose reply       → The candidate reply is mostly clear, but it could use a bit more warmth and clarity. Here’s a revised version:
 
@@ -25,25 +25,25 @@ This version maintains the essential information while adding a friendly touch.
 
 ---
 
-Got it! So, the purpose is to speed up those tollgate approvals for project managers. That’s a fantastic goal! Let’s make sure we have everything in place to streamline the process. Ready to tackle this together? 🚀
+Got it! So, the purpose is to speed up those tollgate approvals for project managers. That’s a fantastic goal! Let’s make sure we have everything in place to help them move forward quickly and efficiently. Ready to tackle the details together? 🚀
 
 --- 
 
-This version keeps the message clear and adds a friendly touch!
+This version keeps the focus on the purpose while adding a friendly and encouraging tone!
 [0;32m[OK][0m    Owner reply         → Sure! Here’s a revised version that fits the persona:
 
 ---
 
-Ah, I see! The service name is **PermitFlow**. That’s a catchy name! Let’s keep the momentum going and make sure everything flows smoothly. What’s next on our agenda? 🚀
+Got it! The service name is PermitFlow. That’s a catchy name! Let’s make sure we highlight how it can streamline the permit process for everyone involved. Ready to dive into the details? 🚀
 
 --- 
 
 This version maintains clarity while adding a friendly touch!
-[0;32m[OK][0m    Data class reply    → Sure! Here’s a revised version that aligns with the persona:
+[0;32m[OK][0m    Data class reply    → Sure! Here’s a revised version that fits the persona:
 
 ---
 
-Got it! The owner is **Bill Bettini**. Great to know! Let’s keep the ball rolling—what’s the next piece of information we need to tackle? 🚀
+Got it! The owner is Bill Bettini. That’s great to know! Let’s make sure we keep him in the loop as we move forward. Anything specific you’d like to discuss about his role? 🚀
 
 --- 
 
@@ -52,7 +52,7 @@ This version maintains clarity while adding a friendly touch!
 
 ---
 
-Got it! The data classification is **non-private**. That’s helpful to know! Let’s keep things moving—what’s the next detail we need to cover? 🚀
+Got it! The data classification is non-private. That’s helpful to know! Let’s make sure we handle everything accordingly. Anything else you’d like to clarify or discuss? 🚀
 
 --- 
 
