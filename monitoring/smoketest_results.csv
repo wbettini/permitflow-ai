@@ -605,3 +605,7 @@ timestamp,endpoint,status,response_time_ms
 2026-01-12T02:53:44.699509,/health,OK,49.3
 2026-01-12T02:53:44.699509,/docs,OK,39.2
 2026-01-12T02:53:44.699509,WebSocket,"ERROR(Handshake status 403 Forbidden -+-+- {'content-length': '0', 'content-type': 'text/plain', 'date': 'Mon, 12 Jan 2026 02:53:44 GMT', 'set-cookie': 'ARRAffinity=6c9ba21b5e2356f008e549e79113debfd8cea3ee57f8aa4e877bbba72e1af0ca;Path=/;HttpOnly;Secure;Domain=permitflow-ai-demo.azurewebsites.net; ARRAffinitySameSite=6c9ba21b5e2356f008e549e79113debfd8cea3ee57f8aa4e877bbba72e1af0ca;Path=/;HttpOnly;SameSite=None;Secure;Domain=permitflow-ai-demo.azurewebsites.net'} -+-+- b'')",0.0
+2026-01-13T02:46:53.812307,/,OK,533.7
+2026-01-13T02:46:53.812307,/health,OK,272.9
+2026-01-13T02:46:53.812307,/docs,OK,258.4
+2026-01-13T02:46:53.812307,WebSocket,"ERROR(Handshake status 403 Forbidden -+-+- {'content-length': '0', 'content-type': 'text/plain', 'date': 'Tue, 13 Jan 2026 02:46:55 GMT', 'set-cookie': 'ARRAffinity=6c9ba21b5e2356f008e549e79113debfd8cea3ee57f8aa4e877bbba72e1af0ca;Path=/;HttpOnly;Secure;Domain=permitflow-ai-demo.azurewebsites.net; ARRAffinitySameSite=6c9ba21b5e2356f008e549e79113debfd8cea3ee57f8aa4e877bbba72e1af0ca;Path=/;HttpOnly;SameSite=None;Secure;Domain=permitflow-ai-demo.azurewebsites.net'} -+-+- b'')",0.0
