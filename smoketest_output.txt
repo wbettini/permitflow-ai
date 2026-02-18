@@ -3,58 +3,9 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (152.5 ms)
-[0;32m[OK][0m    /health             → 200  (134.2 ms)
+[0;32m[OK][0m    /                   → 200  (373.2 ms)
+[0;32m[OK][0m    /health             → 200  (266.1 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (132.2 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=45fe319b-2279-442f-9b60-da097cf94005
-[0;32m[OK][0m    Handshake           → 578.8 ms
-[0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
-[0;32m[OK][0m    Purpose reply       → The candidate reply is mostly clear, but it could use a bit more warmth and clarity. Here’s a revised version:
-
----
-
-📍 **Tollgate 1: Permit to Design**
-
-Great news! We’ll start by capturing your project’s purpose, required features, compliance needs, infrastructure costs, workforce expenses, and any gap analysis. Once we have all that sorted out, you’ll be ready to dive into the design phase. Let’s get this project rolling! 🚀
-
---- 
-
-This version maintains the essential information while adding a friendly touch.
-[0;32m[OK][0m    Service name reply  → It looks like the candidate reply could use a little more clarity and warmth. Here’s a revised version:
-
----
-
-I’m here and ready to help! Just to make sure I understand correctly, are you saying that the purpose is to speed up the tollgate approvals for project managers? If so, that sounds like a fantastic goal! Let’s make this process as smooth as possible. 🚀
-
---- 
-
-This version keeps the essential information while adding a friendly touch.
-[0;32m[OK][0m    Owner reply         → It looks like the candidate reply could use a bit more clarity and warmth. Here’s a revised version:
-
----
-
-Got it! So, the service name is **PermitFlow**. That’s a catchy name! It sounds like it’s all about making the permit process smoother and more efficient. If there’s anything specific you’d like to discuss about PermitFlow, I’m all ears! 😊
-
---- 
-
-This version maintains the essential information while adding a friendly touch.
-[0;32m[OK][0m    Data class reply    → It looks like the candidate reply could use a bit more clarity and warmth. Here’s a revised version:
-
----
-
-Thanks for sharing! So, the owner is **Bill Bettini**. That’s great to know! If there’s anything specific you’d like to discuss about him or how he fits into the project, just let me know. I’m here to help! 😊
-
---- 
-
-This version maintains the essential information while adding a friendly touch.
-[0;32m[OK][0m    TG2 SME review      → It looks like the candidate reply could use a bit more clarity and warmth. Here’s a revised version:
-
----
-
-Thanks for the update! So, the data classification is **non-private**. That’s helpful to know! If you have any more details or questions about this classification, feel free to share. I’m here to help! 😊
-
---- 
-
-This version maintains the essential information while adding a friendly touch.
+[0;32m[OK][0m    /docs               → 200  (219.0 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=f9e00182-d2e8-4312-b609-a439f5f6b674
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
