@@ -3,18 +3,20 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (1701.4 ms)
-[0;32m[OK][0m    /health             → 200  (369.2 ms)
+[0;32m[OK][0m    /                   → 200  (495.2 ms)
+[0;32m[OK][0m    /health             → 200  (145.7 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (477.9 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=240fb866-a98d-403f-8844-474a527f2e57
-[0;32m[OK][0m    Handshake           → 1440.0 ms
+[0;32m[OK][0m    /docs               → 200  (119.7 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=63d39a57-92c3-4808-8328-89d3cee5b075
+[0;32m[OK][0m    Handshake           → 622.0 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
 [0;32m[OK][0m    Purpose reply       → 📍 Tollgate 1: Permit to Design
 
-Great news! We’ll kick things off by capturing your project’s purpose, required features, compliance requirements, infrastructure and workforce costs, and any gap analysis. Once we’ve got all that sorted, you’ll be ready to dive into the design phase. Let’s get this show on the road! 🚀
-[0;32m[OK][0m    Service name reply  → I'm here and ready to help! Just to make sure I’m on the same page, could you clarify what you mean by expediting tollgate approvals for project managers? Are you looking for specific strategies or tools to streamline the process? Let’s get this sorted out! 🚀
-[0;32m[OK][0m    Owner reply         → That sounds like a great name! PermitFlow really captures the essence of streamlining the approval process. How can I assist you further with PermitFlow? Are you looking for features, implementation strategies, or something else? Let’s keep the momentum going! 🚀
-[0;32m[OK][0m    Data class reply    → Got it! Just to clarify, are you saying that Bill Bettini is the owner of PermitFlow? If so, that’s great to know! How can I assist you further with this project? Let’s keep the ball rolling! 🚀
-[0;32m[OK][0m    TG2 SME review      → Got it! Just to clarify, are you saying that the data classification for PermitFlow is non-private? That’s helpful information! How can I assist you further with this project? Let’s keep the momentum going! 🚀
+Great news! We’ll kick things off by capturing your project’s purpose, required features, compliance requirements, infrastructure and workforce costs, and any gap analysis. Once we have all that sorted, you’ll be ready to dive into the design phase. Let’s get this show on the road! 🚀
+[0;32m[OK][0m    Service name reply  → I'm here, but I didn't quite catch that. Could you rephrase? 
+
+Just kidding! I got you! So, the purpose is to speed up those tollgate approvals for project managers, right? That sounds like a fantastic goal! Let’s make sure we outline everything needed to streamline that process. What features or requirements do you have in mind? 🚀
+[0;32m[OK][0m    Owner reply         → Got it! So the service name is PermitFlow—what a catchy name! 🎉 Let’s make sure we capture all the details about how PermitFlow will help expedite those tollgate approvals. What features or requirements do you envision for it? I'm all ears! 👂✨
+[0;32m[OK][0m    Data class reply    → Got it! The owner is Bill Bettini—great to know! 🎉 Let’s make sure we include that in our project details. Is there anything specific you’d like to highlight about Bill or his vision for PermitFlow? I’m all ears! 👂✨
+[0;32m[OK][0m    TG2 SME review      → Got it! The data classification is non-private—thanks for clarifying! 📊 That’s important information for PermitFlow. Now, let’s make sure we capture any other details or requirements you have in mind. What’s next on our list? I’m ready to roll! 🚀
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
