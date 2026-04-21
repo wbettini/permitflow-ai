@@ -3,12 +3,12 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (480.9 ms)
-[0;32m[OK][0m    /health             → 200  (181.7 ms)
+[0;32m[OK][0m    /                   → 200  (620.3 ms)
+[0;32m[OK][0m    /health             → 200  (325.8 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (104.6 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=b15a51fd-8d40-4fbc-8028-644c53d79e11
-[0;32m[OK][0m    Handshake           → 889.5 ms
+[0;32m[OK][0m    /docs               → 200  (307.4 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=9372a9b5-259b-4454-81d4-ed8ed4318946
+[0;32m[OK][0m    Handshake           → 706.9 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
 [0;32m[OK][0m    Purpose reply       → The candidate reply is mostly clear, but it could use a bit more warmth and clarity. Here’s a revised version:
 
@@ -16,7 +16,7 @@
 
 📍 **Tollgate 1: Permit to Design**
 
-Great news! We’ll start by capturing your project’s purpose, required features, compliance needs, and a breakdown of infrastructure and workforce costs. We’ll also conduct a gap analysis to ensure everything is covered. Once we have all that sorted, you’ll be ready to dive into the design phase. Let’s get this project rolling! 🚀
+Great news! We’ll start by capturing your project’s purpose, required features, compliance needs, and infrastructure and workforce costs. We’ll also conduct a gap analysis to ensure everything is in order. Once we’ve got all that sorted, you’ll be ready to dive into the design phase. Let’s make this project shine! ✨
 
 --- 
 
@@ -25,36 +25,32 @@ This version maintains the essential information while adding a friendly touch.
 
 ---
 
-I’m here and ready to help! Just to clarify, are you looking to speed up the tollgate approval process for project managers? If so, I’d love to hear more about your ideas! Let’s make this as smooth as possible! 🚀
+Got it! So, the goal is to speed up those tollgate approvals for project managers. That’s a fantastic aim! Let’s streamline the process and make it as efficient as possible. If you have any specific ideas or areas you want to focus on, just let me know! 🚀
 
 --- 
 
-This version keeps it friendly and approachable while ensuring clarity.
+This version keeps the message relevant while adding a friendly and approachable tone.
 [0;32m[OK][0m    Owner reply         → Sure! Here’s a revised version that fits the persona:
 
 ---
 
-Got it! So, the service name is **PermitFlow**. That sounds like a great way to streamline the process! If you have any specific features or ideas in mind, I’m all ears! Let’s make PermitFlow the best it can be! 🚀
+Ah, got it! The service name is **PermitFlow**. That sounds like a smooth way to handle the process! If you need any help with it or have questions, just let me know. I’m here to help! 🌟
 
 --- 
 
-This keeps it friendly and engaging while ensuring clarity.
+This keeps the message relevant and adds a friendly touch!
 [0;32m[OK][0m    Data class reply    → Sure! Here’s a revised version that fits the persona:
 
 ---
 
-Got it! The owner is **Bill Bettini**. If there’s anything specific you’d like to share about him or how he fits into PermitFlow, I’m all ears! Let’s keep the momentum going! 🚀
+Got it! The owner is **Bill Bettini**. If you need any specific information about him or how he fits into the project, just let me know! I’m all ears! 👂😊
 
 --- 
 
-This keeps it friendly and engaging while ensuring clarity.
+This keeps the message relevant while adding a friendly touch!
 [0;32m[OK][0m    TG2 SME review      → Sure! Here’s a revised version that fits the persona:
 
 ---
 
-Got it! The data classification is **non-private**. That’s helpful to know! If there’s anything else you’d like to add or clarify, just let me know. I’m here to help! 🚀
-
---- 
-
-This keeps it friendly and engaging while ensuring clarity.
+Got it! The data classification is **non-private**. That’s helpful to know! If you have any more details or questions about this, feel free to share. I’m here to help! 😊
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
