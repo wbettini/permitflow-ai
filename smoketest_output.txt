@@ -3,18 +3,20 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (318.2 ms)
-[0;32m[OK][0m    /health             → 200  (259.2 ms)
+[0;32m[OK][0m    /                   → 200  (263.7 ms)
+[0;32m[OK][0m    /health             → 200  (219.7 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (225.8 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=2f808e34-957f-4b1f-b2e4-d0202e7c9679
-[0;32m[OK][0m    Handshake           → 347.7 ms
+[0;32m[OK][0m    /docs               → 200  (210.4 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=7e22f5ec-404c-4b0d-9f9c-f1dbd9ed4873
+[0;32m[OK][0m    Handshake           → 492.3 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
 [0;32m[OK][0m    Purpose reply       → 📍 Tollgate 1: Permit to Design
 
-Great news! We’ll start by capturing your project’s purpose, required features, compliance requirements, infrastructure and workforce costs, and any gap analysis. Once we have all that sorted, you’ll be ready to dive into the design phase. Let’s get this show on the road! 🚀
-[0;32m[OK][0m    Service name reply  → I'm here and ready to help! Just to clarify, are you saying that the purpose of your project is to speed up the tollgate approval process for project managers? If so, that sounds like a fantastic goal! Let’s make sure we capture all the details to get those approvals rolling smoothly. 🚀
-[0;32m[OK][0m    Owner reply         → Got it! The service name is PermitFlow. That sounds like a great name for a project aimed at streamlining the approval process! Let’s make sure we capture all the necessary details to get PermitFlow up and running smoothly. What features do you envision for it? 🚀
-[0;32m[OK][0m    Data class reply    → Got it! The owner of PermitFlow is Bill Bettini. That’s great to know! Now, let’s keep the momentum going. What features do you envision for PermitFlow to help expedite those tollgate approvals? 🚀
-[0;32m[OK][0m    TG2 SME review      → Got it! The data classification for PermitFlow is non-private. That’s helpful information! Now, let’s keep the ball rolling. What specific features do you think would be essential for PermitFlow to help expedite those tollgate approvals? 🚀
+Great news! We’ll gather all the essential details about your project, including its purpose, required features, compliance needs, infrastructure costs, workforce expenses, and any gap analysis. Once we have everything in place, you’ll be all set to move on to the design phase. Let’s get this show on the road! 🚀
+[0;32m[OK][0m    Service name reply  → I'm here, but I didn't quite catch that. Could you rephrase? 
+
+Just kidding! I got it! So, the purpose is to speed up those tollgate approvals for project managers. That’s a fantastic goal! Let’s make sure we gather all the necessary details to help streamline that process. What specific features or requirements do you have in mind? 🚀
+[0;32m[OK][0m    Owner reply         → Got it! So, the service name is PermitFlow. That sounds like a smooth way to navigate the approval process! 🌊 Let’s dive into the details. What features or requirements do you envision for PermitFlow to help project managers expedite those tollgate approvals?
+[0;32m[OK][0m    Data class reply    → Got it! The owner is Bill Bettini. Great to know who’s at the helm of PermitFlow! 🚀 Now, let’s keep the momentum going. What other details or features do you think would be essential for making PermitFlow a success?
+[0;32m[OK][0m    TG2 SME review      → Got it! So, the data classification for PermitFlow is non-private. That’s helpful to know! 🌟 Now, let’s keep building on this. What other details or features do you think would be essential for making PermitFlow a success?
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
