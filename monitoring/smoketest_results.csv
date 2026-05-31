@@ -1157,3 +1157,7 @@ timestamp,endpoint,status,response_time_ms
 2026-05-30T03:18:12.619240,/health,OK,218.9
 2026-05-30T03:18:12.619240,/docs,OK,191.3
 2026-05-30T03:18:12.619240,WebSocket,"ERROR(Handshake status 403 Forbidden -+-+- {'content-length': '0', 'content-type': 'text/plain', 'date': 'Sat, 30 May 2026 03:18:13 GMT', 'set-cookie': 'ARRAffinity=0ad77132a4a61ed67b078d3a655d40a58d4b822256e552ee0bac37f77112e58b;Path=/;HttpOnly;Secure;Domain=permitflow-ai-demo.azurewebsites.net; ARRAffinitySameSite=0ad77132a4a61ed67b078d3a655d40a58d4b822256e552ee0bac37f77112e58b;Path=/;HttpOnly;SameSite=None;Secure;Domain=permitflow-ai-demo.azurewebsites.net'} -+-+- b'')",0.0
+2026-05-31T03:21:59.368844,/,"ERROR(HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10))",10044.4
+2026-05-31T03:21:59.368844,/health,"ERROR(HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10))",10044.6
+2026-05-31T03:21:59.368844,/docs,"ERROR(HTTPSConnectionPool(host='permitflow-ai-demo.azurewebsites.net', port=443): Read timed out. (read timeout=10))",10048.9
+2026-05-31T03:21:59.368844,WebSocket,ERROR(Connection timed out),0.0
