@@ -3,12 +3,12 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (492.1 ms)
-[0;32m[OK][0m    /health             → 200  (310.9 ms)
+[0;32m[OK][0m    /                   → 200  (839.6 ms)
+[0;32m[OK][0m    /health             → 200  (249.4 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (273.2 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=1cc4538b-7357-4a11-af53-e5539d5c07b6
-[0;32m[OK][0m    Handshake           → 536.5 ms
+[0;32m[OK][0m    /docs               → 200  (216.9 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=7f42f810-d307-41ad-a402-434085011726
+[0;32m[OK][0m    Handshake           → 708.2 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
 [0;32m[OK][0m    Purpose reply       → The candidate reply is mostly clear, but it could use a bit more warmth and clarity. Here’s a revised version:
 
@@ -25,36 +25,36 @@ This version maintains the essential information while adding a friendly touch.
 
 ---
 
-I’m here to help! Just to clarify, are you saying that the purpose is to speed up the tollgate approvals for project managers? If so, that sounds like a great goal! Let’s make sure we get everything in place to make that happen. 😊
+I’m here to help! Just to make sure I understand correctly, are you saying that the purpose is to speed up the tollgate approvals for project managers? If so, that sounds like a great goal! Let’s make this process as smooth as possible. 🚀
 
 --- 
 
-This version maintains the essential information while adding a friendly touch and ensuring clarity.
+This version keeps the conversation friendly and engaging while ensuring clarity.
 [0;32m[OK][0m    Owner reply         → It looks like the candidate reply could use a bit more clarity and warmth. Here’s a revised version:
 
 ---
 
-Got it! Just to confirm, are you referring to the service name "PermitFlow"? If so, that sounds like a fantastic name! Let’s keep the momentum going and make sure everything is set for success. 😊
+Got it! Just to clarify, are you referring to the service name "PermitFlow"? If so, that sounds like a fantastic name! Let’s keep the momentum going! 🚀
 
 --- 
 
-This version maintains the essential information while adding a friendly touch and ensuring clarity.
-[0;32m[OK][0m    Data class reply    → It looks like the candidate reply could use a bit more clarity and warmth. Here’s a revised version:
+This version maintains the friendly tone while ensuring clarity and engagement.
+[0;32m[OK][0m    Data class reply    → It looks like the candidate reply could use a bit more warmth and clarity. Here’s a revised version:
 
 ---
 
-Thanks for sharing! Just to confirm, is the owner of PermitFlow Bill Bettini? If so, that’s great to know! Let’s keep the conversation flowing! 😊
+Thanks for sharing! Just to confirm, is the owner of PermitFlow Bill Bettini? If so, that’s great to know! Let’s keep the conversation flowing! 🚀
 
 --- 
 
-This version maintains the essential information while adding a friendly touch and ensuring clarity.
+This version maintains the friendly tone while ensuring clarity and engagement.
 [0;32m[OK][0m    TG2 SME review      → It looks like the candidate reply could use a bit more clarity and warmth. Here’s a revised version:
 
 ---
 
-Thanks for the update! Just to clarify, are you saying that the data classification is non-private? If that’s the case, that’s good to know! Let’s keep everything transparent as we move forward. 😊
+Thanks for the update! Just to confirm, are you saying that the data classification is non-private? If that’s the case, that’s helpful information! Let’s keep the conversation going! 🚀
 
 --- 
 
-This version maintains the essential information while adding a friendly touch and ensuring clarity.
+This version maintains the friendly tone while ensuring clarity and engagement.
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
