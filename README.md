@@ -67,7 +67,7 @@ PermitFlow‑AI makes them:- Transparent — every decision has a justification.
 
 ---
 
-## Live Status
+## Live Status http://permitflow.bettini.us
 
 <p align="center">
   <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wbettini/93c19d78e2f7ea5477c83cfa3bb5b2d3/raw/latency.json&cacheSeconds=60" alt="Avg Latency">
