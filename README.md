@@ -78,4 +78,4 @@ PermitFlow‑AI makes them:- Transparent — every decision has a justification.
   <img src="https://raw.githubusercontent.com/wbettini/permitflow-ai/main/monitoring/latency_trends.png" alt="Azure Smoke Test Latency Trends" width="700">
 </p>
 
-<p align="center"><em>Last updated: <!--LAST_UPDATED-->2026-08-07 04:30:32 UTC<!--LAST_UPDATED--></em></p>
+<p align="center"><em>Last updated: <!--LAST_UPDATED-->2026-08-08 03:39:31 UTC<!--LAST_UPDATED--></em></p>
