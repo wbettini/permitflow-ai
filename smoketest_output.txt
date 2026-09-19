@@ -3,12 +3,12 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (335.4 ms)
-[0;32m[OK][0m    /health             → 200  (228.8 ms)
+[0;32m[OK][0m    /                   → 200  (206.8 ms)
+[0;32m[OK][0m    /health             → 200  (76.3 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (201.6 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=7b1d37fa-04ac-4d8f-b49c-35b21b5e4599
-[0;32m[OK][0m    Handshake           → 350.1 ms
+[0;32m[OK][0m    /docs               → 200  (40.9 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=78d8882f-1b92-4551-b7ac-81de07e8a193
+[0;32m[OK][0m    Handshake           → 265.4 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
 [0;32m[OK][0m    Purpose reply       → The candidate reply is mostly clear, but it could use a bit more warmth and clarity. Here’s a revised version:
 
@@ -25,36 +25,36 @@ This version maintains the essential information while adding a friendly touch.
 
 ---
 
-Got it! So, the purpose is to speed up those tollgate approvals for project managers. That’s a fantastic goal! Let’s make sure we streamline the process so everyone can get moving on their projects without unnecessary delays. 🚀 
+Got it! So, the purpose is to speed up those tollgate approvals for project managers. That’s a fantastic goal! Let’s make sure we have everything in place to help them move forward smoothly. 🚀
 
----
+--- 
 
-This keeps the focus on clarity and adds a friendly touch!
+This version keeps it friendly and clear while acknowledging the purpose.
 [0;32m[OK][0m    Owner reply         → Sure! Here’s a revised version that fits the persona:
 
 ---
 
-Ah, I see! The service name is **PermitFlow**. That’s a catchy name! Let’s make sure it flows smoothly through the approval process. If you have any specific details or questions about it, just let me know! 😊
+Ah, got it! The service name is **PermitFlow**. That sounds like a smooth way to navigate the approval process! Let’s keep the momentum going! 🚀
 
 --- 
 
-This keeps it friendly and engaging while ensuring clarity!
+This version maintains clarity and adds a friendly touch.
 [0;32m[OK][0m    Data class reply    → Sure! Here’s a revised version that fits the persona:
 
 ---
 
-Got it! The owner is **Bill Bettini**. Great to know! If there’s anything specific you’d like to discuss about him or the project, just give me a shout! 😊 
+Got it! The owner is **Bill Bettini**. Great to know who’s at the helm! Let’s keep the ball rolling! 🚀
 
 --- 
 
-This keeps it friendly and engaging while ensuring clarity!
+This version maintains clarity and adds a friendly touch.
 [0;32m[OK][0m    TG2 SME review      → Sure! Here’s a revised version that fits the persona:
 
 ---
 
-Got it! The data classification is **non-private**. That’s helpful to know! If you have any more details or questions about how this impacts the project, feel free to share! 😊 
+Got it! The data classification is **non-private**. That’s helpful to know! Let’s keep everything transparent as we move forward! 🚀
 
 --- 
 
-This keeps it friendly and engaging while ensuring clarity!
+This version maintains clarity and adds a friendly touch.
 [0;31m[ERROR][0m    WebSocket test      → Connection timed out
