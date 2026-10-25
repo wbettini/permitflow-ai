@@ -3,12 +3,12 @@
 [1;33m🔍 Running smoke tests only (no deploy)...[0m
 [1;33mRunning smoke tests against https://permitflow-ai-demo.azurewebsites.net...[0m
 
-[0;32m[OK][0m    /                   → 200  (356.8 ms)
-[0;32m[OK][0m    /health             → 200  (305.5 ms)
+[0;32m[OK][0m    /                   → 200  (225.8 ms)
+[0;32m[OK][0m    /health             → 200  (206.6 ms)
                                Payload: {'status': 'ok'}
-[0;32m[OK][0m    /docs               → 200  (276.5 ms)
-[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=d648b60f-739d-4f84-965c-0b52089c615f
-[0;32m[OK][0m    Handshake           → 548.7 ms
+[0;32m[OK][0m    /docs               → 200  (204.3 ms)
+[1;33m[INFO][0m    WebSocket connect   → wss://permitflow-ai-demo.azurewebsites.net/ws/flowbot?avatar=FlowBot&session=d80ef393-d7a9-4ea1-b89c-51355945f2e3
+[0;32m[OK][0m    Handshake           → 5385.2 ms
 [0;32m[OK][0m    TG1 start           → Hello! I'm FlowBot. How can I assist you today?
 [0;32m[OK][0m    Purpose reply       → The candidate reply is mostly clear, but it could use a bit more warmth and clarity. Here’s a revised version:
 
